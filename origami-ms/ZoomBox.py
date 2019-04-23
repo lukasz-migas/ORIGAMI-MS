@@ -1,14 +1,14 @@
 from matplotlib.patches import Rectangle
-from wx.lib.pubsub import setupkwargs
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import numpy as np
 import wx
 
-# FIXME: This function doesn't quite work as it should. 
+# FIXME: This function doesn't quite work as it should.
 # If we left click and the right click it gets locked for some reason.
 # Check why is this happening!
 # TODO enable vertical line (i.e. scale low intensity ions!)
+
 
 def GetMaxes(axes, xmin=None, xmax=None):
     yvals = []
@@ -27,7 +27,7 @@ def GetMaxes(axes, xmin=None, xmax=None):
         try:
             yvals.append([np.amin(ydat), np.amax(ydat)])
             xvals.append([np.amin(xdat), np.amax(xdat)])
-        except Exception, e:
+        except Exception as e:
             pass
 
     for p in axes.collections:
@@ -46,7 +46,7 @@ def GetMaxes(axes, xmin=None, xmax=None):
         try:
             yvals.append([np.amin(ydat), np.amax(ydat)])
             xvals.append([np.amin(xdat), np.amax(xdat)])
-        except Exception, e:
+        except Exception as e:
             pass
 
     for patch in axes.patches:
@@ -63,9 +63,9 @@ def GetMaxes(axes, xmin=None, xmax=None):
                     try:
                         yvals.append([np.amin(ydat), np.amax(ydat)])
                         xvals.append([np.amin(xdat), np.amax(xdat)])
-                    except Exception, e:
+                    except Exception as e:
                         pass
-        except Exception, e:
+        except Exception as e:
             try:
                 xys = patch.xy
                 ydat = xys[:, 1]
@@ -76,7 +76,7 @@ def GetMaxes(axes, xmin=None, xmax=None):
 
                 yvals.append([np.amin(ydat), np.amax(ydat)])
                 xvals.append([np.amin(xdat), np.amax(xdat)])
-            except Exception, e:
+            except Exception as e:
                 pass
 
     for t in axes.texts:
@@ -136,6 +136,7 @@ def GetStart(axes):
 
 
 class GetXValues:
+
     def __init__(self, axes):
         """
         This function retrieves the x-axis info 
@@ -143,24 +144,23 @@ class GetXValues:
         self.axes = None
         self.canvas = None
         self.cids = []
-        
-        self.new_axes(axes)  
+
+        self.new_axes(axes)
 
     def new_axes(self, axes):
-        
 
         self.axes = axes
         if self.canvas is not axes[0].figure.canvas:
             for cid in self.cids:
                 self.canvas.mpl_disconnect(cid)
                 print('disconnected')
-            self.canvas = axes[0].figure.canvas      
-        
+            self.canvas = axes[0].figure.canvas
+
 #         print(self.canvas.axes.get_xlim())
-        
+
         for axes in self.axes:
-            print(axes.get_xlim())
-            
+            print((axes.get_xlim()))
+
 #         print('i am in')
 
 
@@ -277,15 +277,15 @@ class ZoomBox:
         assert (spancoords in ('data', 'pixels'))
 
         self.spancoords = spancoords
-        self.eventpress = None 
-        self.eventrelease = None 
+        self.eventpress = None
+        self.eventrelease = None
 
         self.new_axes(axes, rectprops)
         if data_lims is None:
             self.data_lims = GetStart(self.axes)
         else:
             self.data_lims = data_lims
-            
+
         xmin, ymin, xmax, ymax = self.data_lims
         if xmin > xmax: xmin, xmax = xmax, xmin
         if ymin > ymax: ymin, ymax = ymax, ymin
@@ -337,20 +337,19 @@ class ZoomBox:
         # If canvas was locked
         if not self.canvas.widgetlock.available(self):
             return True
-        
-        
+
         # TO DO: When right click, enable extraction of mz or dt
         if self.validButtons is not None:
             if not evt.button in self.validButtons:
                 if evt.button == 3:
-#                     print('right click'); 
+#                     print('right click');
                     return True;
                 elif evt.button == 2 and self.eventrelease is None:
 #                     for axes in self.axes:
                     axes = self.axes[0]
                     Xvalues = axes.get_xlim()
                     Yvalues = axes.get_ylim()
-                    
+
                     # Sends message to add data to table
                     pub.sendMessage('add2table', xvalsMin=Xvalues[0], xvalsMax=Xvalues[1], yvalsMax=Yvalues[1])
 #                     pub.sendMessage('add2table', ((values)))
@@ -358,8 +357,7 @@ class ZoomBox:
                     return True;
                 else:
                     return False
-                
-                
+
 #         # Only do selection if event was triggered with a desired button
 #         if self.validButtons is not None:
 #             if not evt.button in self.validButtons:
@@ -411,7 +409,7 @@ class ZoomBox:
 
             if wx.GetKeyState(wx.WXK_CONTROL):
                 # Ignore the resize if the control key is down
-                if evt.button == 1: #and self.smash == 1:
+                if evt.button == 1:  # and self.smash == 1:
                     pub.sendMessage('left_click', xpos=evt.xdata, ypos=evt.ydata)
                 return
             # x0,y0,x1,y1=GetMaxes(evt.inaxes)
@@ -431,7 +429,7 @@ class ZoomBox:
                     zoomout = True
             # Register a click if zoomout was not necessary
             if not zoomout:
-                if evt.button == 1:  #and self.smash == 1:
+                if evt.button == 1:  # and self.smash == 1:
                     pub.sendMessage('left_click', xpos=evt.xdata, ypos=evt.ydata)
 
             for axes in self.axes:
@@ -467,7 +465,7 @@ class ZoomBox:
         # Switch to span if a small delta y is used
         try:
             y0, y1 = evt.inaxes.get_ylim()
-        except Exception, e:
+        except Exception as e:
             y0, y1 = self.data_lims[1], self.data_lims[3]
         if ymax - ymin < (y1 - y0) * self.crossoverpercent:
             # print ymax,ymin,ymax-ymin,(y1-y0)*self.crossoverpercent
@@ -537,7 +535,7 @@ class ZoomBox:
 
     def OnMotion(self, evt):
 #         pub.sendMessage('newxy', xpos=evt.xdata, ypos=evt.ydata)
-        
+
         'on motion notify event if box/line is wanted'
         if self.eventpress is None or self.ignore(evt): return
         x, y = evt.xdata, evt.ydata  # actual position (with
@@ -549,15 +547,15 @@ class ZoomBox:
         miny, maxy = self.eventpress.ydata, y  # click-y and actual mouse-y
         if minx > maxx: minx, maxx = maxx, minx  # get them in the right order
         if miny > maxy: miny, maxy = maxy, miny
-        
+
         # Checks whether values are not empty (or are float)
         if not isinstance(minx, float) or not isinstance(maxx, float): return
         if not isinstance(miny, float) or not isinstance(maxy, float): return
-        
+
         # Changes from a yellow box to a colored line
         for axes in self.axes:
             y0, y1 = axes.get_ylim()
-            
+
         if abs(maxy - miny) < abs(y1 - y0) * self.crossoverpercent:
             # print self.to_draw
             # print miny,maxy,y
@@ -570,7 +568,7 @@ class ZoomBox:
             maxy = avg
             for to_draw in self.to_draw:
                 to_draw.set_edgecolor('m')
-                to_draw.set_linewidth(2.5)                
+                to_draw.set_linewidth(2.5)
                 to_draw.set_alpha(0.9)
         else:
             for to_draw in self.to_draw:

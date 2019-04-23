@@ -3,10 +3,10 @@
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
 
-#    This program is free software. Feel free to redistribute it and/or 
-#    modify it under the condition you cite and credit the authors whenever 
-#    appropriate. 
-#    The program is distributed in the hope that it will be useful but is 
+#    This program is free software. Feel free to redistribute it and/or
+#    modify it under the condition you cite and credit the authors whenever
+#    appropriate.
+#    The program is distributed in the hope that it will be useful but is
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
@@ -21,8 +21,9 @@ class config():
     """
     Configuration file that shares data between modules
     """
+
     def __init__(self):
-        
+
         self.version = "1.0.1"
         self.links = {'home' : 'https://www.click2go.umip.com/i/s_w/ORIGAMI.html',
                       'github' : 'https://github.com/lukasz-migas/ORIGAMI',
@@ -41,33 +42,30 @@ class config():
         self.iExponentIncre = None
         self.iBoltzmann = None
         self.wrensCMD = None
-        
+
         self.CVsList = None
         self.SPVsList = None
-        
+
         self.CSVFilePath = None
         self.startTime = None
-        
+
         self.wrensRunnerPath = "C:/Program Files (x86)/Wrens/Bin/ScriptRunnerLight.exe"
         self.wrensLinearName = "CIU_LINEAR.dll"
-        self.wrensLinearPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensLinearName,' "'])
+        self.wrensLinearPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensLinearName, ' "'])
         self.wrensExponentName = "CIU_EXPONENT.dll"
-        self.wrensExponentPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensExponentName,' "'])
+        self.wrensExponentPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensExponentName, ' "'])
         self.wrensBoltzmannName = "CIU_FITTED.dll"
-        self.wrensBoltzmannPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensBoltzmannName,' "'])
+        self.wrensBoltzmannPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensBoltzmannName, ' "'])
         self.wrensUserDefinedName = "CIU_LIST.dll"
-        self.wrensUserDefinedPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensUserDefinedName,' "'])
+        self.wrensUserDefinedPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensUserDefinedName, ' "'])
         self.wrensResetName = "CIU_RESET.dll"
-        self.wrensResetPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensResetName,' "'])
-        
-        
-
+        self.wrensResetPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensResetName, ' "'])
 
     def importConfig(self, fileName=None, e=None):
         """
         Imports config from a file
         """
-        if not os.path.isfile(fileName): 
+        if not os.path.isfile(fileName):
             print('not a path')
             return
         f = open(fileName, 'r')
@@ -90,122 +88,123 @@ class config():
                 if line.startswith("iStepVoltage "):
                     self.iStepVoltage = str2num(line.split()[1])
                 if line.startswith("iExponentPerct "):
-                    self.iExponentPerct = str2num(line.split()[1])  
+                    self.iExponentPerct = str2num(line.split()[1])
                 if line.startswith("iExponentIncre "):
                     self.iExponentIncre = str2num(line.split()[1])
                 if line.startswith("iBoltzmann "):
                     self.iBoltzmann = str2num(line.split()[1])
-                
+
 #                 if line.startswith("wrensPath "):
 #                     self.wrensPath = str(line.split(" ")[1::])
-#                     print(self.wrensPath, os.path.isabs(self.wrensPath))  
-                
+#                     print(self.wrensPath, os.path.isabs(self.wrensPath))
+
                 if line.startswith("wrensLinearName "):
                     self.wrensLinearName = str(line.split()[1])
                 if line.startswith("wrensExponentName "):
-                    self.wrensExponentName = str(line.split()[1])   
+                    self.wrensExponentName = str(line.split()[1])
                 if line.startswith("wrensBoltzmannName "):
-                    self.wrensBoltzmannName = str(line.split()[1])  
+                    self.wrensBoltzmannName = str(line.split()[1])
                 if line.startswith("wrensUserDefinedName "):
-                    self.wrensUserDefinedName = str(line.split()[1])  
+                    self.wrensUserDefinedName = str(line.split()[1])
                 if line.startswith("wrensResetName "):
-                    self.wrensResetName = str(line.split()[1])  
-                    
-        self.wrensLinearPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensLinearName,' "'])
-        self.wrensExponentPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensExponentName,' "'])
-        self.wrensBoltzmannPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensBoltzmannName,' "'])
-        self.wrensUserDefinedPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensUserDefinedName,' "'])
-        self.wrensResetPath = "".join(['"',self.wrensRunnerPath,'" ',self.wrensResetName,' "'])
-                    
+                    self.wrensResetName = str(line.split()[1])
+
+        self.wrensLinearPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensLinearName, ' "'])
+        self.wrensExponentPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensExponentName, ' "'])
+        self.wrensBoltzmannPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensBoltzmannName, ' "'])
+        self.wrensUserDefinedPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensUserDefinedName, ' "'])
+        self.wrensResetPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensResetName, ' "'])
+
     def exportConfig(self, fileName=None, e=None):
         """
         Exports config to a file
         """
-        
-        print(''.join(["Exporting configuration file ", fileName]))
+
+        print((''.join(["Exporting configuration file ", fileName])))
         f = open(fileName, 'w+')
         f.write('General config scheme\n')
         f.write('Property<space>Value\n')
         f.write('Please DO NOT change the property names\n')
-        f.write('\n')    
+        f.write('\n')
         f.write('# === GENERAL SETTINGS === #\n')
-        f.write("iPolarity " + str(self.iPolarity)+ "\n")
-        f.write("iActivationZone " + str(self.iActivationZone)+ "\n")
-        f.write("iActivationMode " + str(self.iActivationMode)+ "\n")
-        f.write("iSPV " + str(self.iSPV)+ "\n")
-        f.write("iScanTime " + str(self.iScanTime)+ "\n")
-        f.write("iStartVoltage " + str(self.iStartVoltage)+ "\n")
-        f.write("iEndVoltage " + str(self.iEndVoltage)+ "\n")
-        f.write("iStepVoltage " + str(self.iStepVoltage)+ "\n")
-        f.write("iExponentPerct " + str(self.iExponentPerct)+ "\n")
-        f.write("iExponentIncre " + str(self.iExponentIncre)+ "\n")
-        f.write("iBoltzmann " + str(self.iBoltzmann)+ "\n")
+        f.write("iPolarity " + str(self.iPolarity) + "\n")
+        f.write("iActivationZone " + str(self.iActivationZone) + "\n")
+        f.write("iActivationMode " + str(self.iActivationMode) + "\n")
+        f.write("iSPV " + str(self.iSPV) + "\n")
+        f.write("iScanTime " + str(self.iScanTime) + "\n")
+        f.write("iStartVoltage " + str(self.iStartVoltage) + "\n")
+        f.write("iEndVoltage " + str(self.iEndVoltage) + "\n")
+        f.write("iStepVoltage " + str(self.iStepVoltage) + "\n")
+        f.write("iExponentPerct " + str(self.iExponentPerct) + "\n")
+        f.write("iExponentIncre " + str(self.iExponentIncre) + "\n")
+        f.write("iBoltzmann " + str(self.iBoltzmann) + "\n")
         f.write('# === PATHS === #\n')
-        f.write("wrensLinearName " + str(self.wrensLinearName)+ "\n")
-        f.write("wrensExponentName " + str(self.wrensExponentName)+ "\n")     
-        f.write("wrensBoltzmannName " + str(self.wrensBoltzmannName)+ "\n")
-        f.write("wrensUserDefinedName " + str(self.wrensUserDefinedName)+ "\n")
-        f.write("wrensResetName " + str(self.wrensResetName)+ "\n")
+        f.write("wrensLinearName " + str(self.wrensLinearName) + "\n")
+        f.write("wrensExponentName " + str(self.wrensExponentName) + "\n")
+        f.write("wrensBoltzmannName " + str(self.wrensBoltzmannName) + "\n")
+        f.write("wrensUserDefinedName " + str(self.wrensUserDefinedName) + "\n")
+        f.write("wrensResetName " + str(self.wrensResetName) + "\n")
         f.close()
-                    
+
     def exportOrigamiConfig(self, fileName=None, e=None):
         """
         Exports config to a file
         """
-        
-        print(''.join(["Exporting ORIGAMI configuration file ", fileName]))
-        
+
+        print((''.join(["Exporting ORIGAMI configuration file ", fileName])))
+
         f = open(fileName, 'w+')
         # Global setting
-        f.write("method " + str(self.iActivationMode)+ "\n")
-        
+        f.write("method " + str(self.iActivationMode) + "\n")
+
         # Linear/Exponential/Boltzmann methods only
         if (self.iActivationMode == 'Linear' or
             self.iActivationMode == 'Exponential' or
             self.iActivationMode == 'Boltzmann'):
-            f.write("spv " + str(self.iSPV)+ "\n")
-            f.write("start " + str(self.iStartVoltage)+ "\n")
-            f.write("end " + str(self.iEndVoltage)+ "\n")
-            f.write("step " + str(self.iStepVoltage)+ "\n")
+            f.write("spv " + str(self.iSPV) + "\n")
+            f.write("start " + str(self.iStartVoltage) + "\n")
+            f.write("end " + str(self.iEndVoltage) + "\n")
+            f.write("step " + str(self.iStepVoltage) + "\n")
         else:
-            f.write("spv " + "None"+ "\n")
-            f.write("start " + "None"+ "\n")
-            f.write("end " + "None"+ "\n")
-            f.write("step " + "None"+ "\n")
-        
+            f.write("spv " + "None" + "\n")
+            f.write("start " + "None" + "\n")
+            f.write("end " + "None" + "\n")
+            f.write("step " + "None" + "\n")
+
         # Exponential method only
         if self.iActivationMode == 'Exponential':
-            f.write("expIncrement " + str(self.iExponentIncre)+ "\n")
-            f.write("expPercentage " + str(self.iExponentPerct)+ "\n")
+            f.write("expIncrement " + str(self.iExponentIncre) + "\n")
+            f.write("expPercentage " + str(self.iExponentPerct) + "\n")
         else:
-            f.write("expIncrement " + "None"+ "\n")
-            f.write("expPercentage " + "None"+ "\n")            
-            
+            f.write("expIncrement " + "None" + "\n")
+            f.write("expPercentage " + "None" + "\n")
+
         # Boltzman method only
         if self.iActivationMode == 'Boltzmann':
-            f.write("dx " + str(self.iBoltzmann)+ "\n")
+            f.write("dx " + str(self.iBoltzmann) + "\n")
         else:
-            f.write("dx " + "None"+ "\n")
-        
+            f.write("dx " + "None" + "\n")
+
         # User-specified method only
         if self.iActivationMode == 'User-defined':
-            f.write("SPVsList " + str(self.SPVsList)+ "\n")
-            f.write("CVsList " + str(self.CVsList)+ "\n")
+            f.write("SPVsList " + str(self.SPVsList) + "\n")
+            f.write("CVsList " + str(self.CVsList) + "\n")
         else:
-            f.write("SPVsList " + "None"+ "\n")
-            f.write("CVsList " + "None"+ "\n")
-            
-        f.write("command " + str(self.wrensCMD)+ "\n")
-            
+            f.write("SPVsList " + "None" + "\n")
+            f.write("CVsList " + "None" + "\n")
+
+        f.write("command " + str(self.wrensCMD) + "\n")
+
         # Close file
         f.close()
-                    
-                    
+
+
 class IconContainer:
+
     def __init__(self):
-        
+
         self.icons()
-        
+
     def icons(self):
         origamiLogo = PyEmbeddedImage(
             "iVBORw0KGgoAAAANSUhEUgAAAcoAAADgCAIAAAAMvrFvAAAABGdBTUEAALGPC/xhBQAAAAlw"
@@ -475,24 +474,4 @@ class IconContainer:
             "IAhVIL0SBEGoAumVIAhCFUivBEEQqkB6JQiCUAXSK0EQhCqQXgmCIFSB9EoQBKEKpFeCIAgV"
             "SEj4/08YXTiH8v1hAAAAAElFTkSuQmCC")
         self.getLogo = origamiLogo.GetBitmap()
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+

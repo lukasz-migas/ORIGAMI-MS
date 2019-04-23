@@ -1,6 +1,7 @@
 from matplotlib.transforms import blended_transform_factory
+from matplotlib.patches import Rectangle
+from pubsub import pub
 
-from ZoomBox import *
 
 class NoZoomSpan:
     """
@@ -140,7 +141,7 @@ class NoZoomSpan:
         if vmin > vmax: vmin, vmax = vmax, vmin
         span = vmax - vmin
 
-        print vmin, vmax, span
+        print(vmin, vmax, span)
         pub.sendMessage('scans_selected', min=vmin, max=vmax)
         if self.minspan is not None and span <= self.minspan:
             self.canvas.draw()

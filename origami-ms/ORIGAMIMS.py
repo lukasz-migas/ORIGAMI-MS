@@ -14,21 +14,15 @@
 # Import libraries
 import wx
 import numpy as np
-import os
-import time
 import sys
-from time import clock, gmtime, strftime
-from wx.lib.pubsub import setuparg1
-import path
-from subprocess import call, Popen
+from time import gmtime, strftime
+from subprocess import Popen
 import webbrowser
-from IDs import *
 
-# Import ORIGAMI libraries
 import mainWindow as mainWindow
 import config as config
-from toolbox import *
 import dialogs
+from IDs import ID_helpHomepage, ID_helpGitHub, ID_helpCite, ID_helpNewVersion
 
 
 class ORIGAMIMS(object):
@@ -108,9 +102,9 @@ class ORIGAMIMS(object):
         This function checks that all variables are in correct format
         """
 
-        print("version", self.config.version)
+        print(("version", self.config.version))
 
-        if isinstance(self.config.iSPV, (int, long)): pass
+        if isinstance(self.config.iSPV, int): pass
         else:
             msg = ("SPV value should be an integer!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -305,7 +299,7 @@ class ORIGAMIMS(object):
 
         self.onPlotSPV(ColEnergyX, scanPerVoltageList)
         self.onPlotTime(ColEnergyX, timeList)
-        print(''.join(["Your submission code: ", self.wrensCMD]))
+        print((''.join(["Your submission code: ", self.wrensCMD])))
 
     def onPrepareLinearMethod(self):
 
@@ -363,7 +357,7 @@ class ORIGAMIMS(object):
         ColEnergyX = np.linspace(self.config.iStartVoltage,
                                  self.config.iEndVoltage,
                                  numberOfCEsteps)
-        for i in xrange(int(numberOfCEsteps)):
+        for i in range(int(numberOfCEsteps)):
             if abs(ColEnergyX[i]) >= abs(self.config.iEndVoltage * self.config.iExponentPerct / 100):
                 expAccumulator = expAccumulator + self.config.iExponentIncre
                 scanPerVoltageFit = np.round(startScansPerVoltage * np.exp(expAccumulator), 0)
@@ -473,7 +467,7 @@ class ORIGAMIMS(object):
                            type="Error")
             return
 
-        print(self.config.CSVFilePath)
+        print((self.config.CSVFilePath))
         try:
             spvCVlist = np.genfromtxt(self.config.CSVFilePath,
                                       skip_header=1,
@@ -508,7 +502,7 @@ class ORIGAMIMS(object):
         self.config.SPVsList = scanPerVoltageList
         self.config.CVsList = ColEnergyX
 
-        print(SPV_list, CV_list)
+        print((SPV_list, CV_list))
 
         wrensCMD = ''.join([self.config.wrensUserDefinedPath,
                             self.config.iActivationZone, ',',
@@ -565,7 +559,7 @@ class ORIGAMIMS(object):
                            type="Error")
             return
 
-        print(''.join(["Your code: ", self.wrensCMD]))
+        print((''.join(["Your code: ", self.wrensCMD])))
 
         self.wrensRun = Popen(self.wrensCMD)
 
@@ -593,7 +587,7 @@ class ORIGAMIMS(object):
         dlg = wx.DirDialog(self.view, "Select MassLynx directory",
                            style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
-            print("You chose %s" % dlg.GetPath())
+            print(("You chose %s" % dlg.GetPath()))
             self.view.panelControls.path_value.SetValue(dlg.GetPath())
             self.currentPath = dlg.GetPath()
 
@@ -606,23 +600,23 @@ class ORIGAMIMS(object):
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
             self.config.importConfig(fileName=fileName, e=None)
-            print(''.join(["WREnS runner path: ", self.config.wrensRunnerPath]))
-            print(''.join(["Linear path: ", self.config.wrensLinearPath]))
-            print(''.join(["Exponent path: ", self.config.wrensExponentPath]))
-            print(''.join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
-            print(''.join(["List path: ", self.config.wrensUserDefinedPath]))
-            print(''.join(["Reset path: ", self.config.wrensResetPath]))
+            print((''.join(["WREnS runner path: ", self.config.wrensRunnerPath])))
+            print((''.join(["Linear path: ", self.config.wrensLinearPath])))
+            print((''.join(["Exponent path: ", self.config.wrensExponentPath])))
+            print((''.join(["Boltzmann path: ", self.config.wrensBoltzmannPath])))
+            print((''.join(["List path: ", self.config.wrensUserDefinedPath])))
+            print((''.join(["Reset path: ", self.config.wrensResetPath])))
 
     def importConfigFileOnStart(self, evt):
         print("Importing origamiConfig.ini")
         self.config.importConfig(fileName="origamiConfig.ini", e=None)
 
-        print(''.join(["WREnS runner path: ", self.config.wrensRunnerPath]))
-        print(''.join(["Linear path: ", self.config.wrensLinearPath]))
-        print(''.join(["Exponent path: ", self.config.wrensExponentPath]))
-        print(''.join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
-        print(''.join(["List path: ", self.config.wrensUserDefinedPath]))
-        print(''.join(["Reset path: ", self.config.wrensResetPath]))
+        print((''.join(["WREnS runner path: ", self.config.wrensRunnerPath])))
+        print((''.join(["Linear path: ", self.config.wrensLinearPath])))
+        print((''.join(["Exponent path: ", self.config.wrensExponentPath])))
+        print((''.join(["Boltzmann path: ", self.config.wrensBoltzmannPath])))
+        print((''.join(["List path: ", self.config.wrensUserDefinedPath])))
+        print((''.join(["Reset path: ", self.config.wrensResetPath])))
 
     def onExportConfig(self, evt):
         """
@@ -649,7 +643,7 @@ class ORIGAMIMS(object):
         dlg = wx.FileDialog(self.view, "Choose a file:", wildcard="*.txt; *.csv" ,
                            style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
-            print("You chose %s" % dlg.GetPath())
+            print(("You chose %s" % dlg.GetPath()))
             self.config.CSVFilePath = dlg.GetPath()
 
     def onPlotSPV(self, xvals, yvals):
