@@ -112,3 +112,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+origami-ms/.project
+origami-ms/.pydevproject
+*.prefs
