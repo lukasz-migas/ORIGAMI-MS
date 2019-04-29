@@ -17,6 +17,7 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
 from matplotlib.figure import Figure
 
 from pubsub import pub
+from ZoomBox import GetXValues
 
 
 class plottingWindow(wx.Window):

@@ -31,7 +31,7 @@ class MyFrame(wx.Frame):
                  style=wx.NO_FULL_REPAINT_ON_RESIZE):
         wx.Frame.__init__(self, None, title=title)
 
-#         self.SetDimensions(0, 0, 600, 700)
+        self.SetSize(600, 700)
         self.Centre()
 
         self.presenter = parent
@@ -41,14 +41,15 @@ class MyFrame(wx.Frame):
         try:
             icon = wx.Icon('icon.ico', wx.BITMAP_TYPE_ICO, 16, 16)
             self.SetIcon(icon)
-        except: pass
+        except:
+            pass
 
         # Setup Notebook manager
         self._mgr = wx.aui.AuiManager(self)
         self._mgr.SetDockSizeConstraint(1, 1)
 
         self.panelControls = panelControls(self, self.presenter, self.config)  # Settings
-        self.panelPlots = panelPlot(self)  # Settings
+        self.panelPlots = panelPlot(self, self.config)  # Settings
 
         self._mgr.AddPane(self.panelControls, wx.aui.AuiPaneInfo().Top().CloseButton(False)
                           .GripperTop().MinSize((400, 200)).Gripper(False).BottomDockable(False)

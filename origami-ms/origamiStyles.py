@@ -47,9 +47,9 @@ def makeMenuItem(parent, text, id=-1, bitmap=None):
 
 def makeStaticBox(parent, title, size, color, id=-1):
     staticBox = wx.StaticBox(parent, id, title, size=size)
-    font = wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD)
-    staticBox.SetForegroundColour(color)
-    staticBox.SetFont(font)
+#     font = wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+#     staticBox.SetForegroundColour(color)
+#     staticBox.SetFont(font)
 
     return staticBox
 

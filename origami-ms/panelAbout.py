@@ -12,7 +12,7 @@ class panelAbout(wx.MiniFrame):
 
     def __init__(self, parent, presenter, frameTitle, config, icons):
         wx.MiniFrame.__init__(self, parent, -1, frameTitle, style=wx.DEFAULT_FRAME_STYLE
-                       & ~(wx.RESIZE_BORDER | wx.RESIZE_BOX | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX))
+                       & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX))
 
         self.parent = parent
         self.presenter = presenter

@@ -1,18 +1,6 @@
-# -*- coding: utf-8 -*-
-
-# -------------------------------------------------------------------------
-#    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
-#    This program is free software. Feel free to redistribute it and/or
-#    modify it under the condition you cite and credit the authors whenever
-#    appropriate.
-#    The program is distributed in the hope that it will be useful but is
-#    provided WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
-# -------------------------------------------------------------------------
-
-from builtins import str
 import numpy as np
+
+__all__ = ["byte2str", "str2num", "num2str", "str2int", "float2int", "str2bool"]
 
 
 def str2num(string):

@@ -15,6 +15,7 @@
 import wx
 import numpy as np
 import sys
+import os
 from time import gmtime, strftime
 from subprocess import Popen
 import webbrowser
@@ -52,8 +53,10 @@ class ORIGAMIMS(object):
         self.config = config.config()
         self.icons = config.IconContainer()
 
-        self.view = mainWindow.MyFrame(self, config=self.config,
-                                       icons=self.icons, title="ORIGAMI-MS")
+        self.view = mainWindow.MyFrame(self,
+                                       config=self.config,
+                                       icons=self.icons,
+                                       title="ORIGAMI-MS")
         self.wrensCMD = None
         self.wrensRun = None
         self.wrensReset = None
@@ -62,6 +65,8 @@ class ORIGAMIMS(object):
                            'activationZone':None,
                            'method':None,
                            'command':None}
+        # Set current working directory
+        self.config.cwd = os.getcwd()
         self.logging = True
 
         self.config.startTime = (strftime("%H-%M-%S_%d-%m-%Y", gmtime()))
@@ -69,6 +74,7 @@ class ORIGAMIMS(object):
         self.__wx_app.SetAppName("ORIGAMI-MS")
         self.__wx_app.SetVendorName("Lukasz G Migas, University of Manchester")
 
+        self.check_log_path()
         # Log all events to
         if self.logging == True:
             sys.stdin = self.view.panelPlots.log
@@ -77,9 +83,17 @@ class ORIGAMIMS(object):
 
         self.importConfigFileOnStart(evt=None)
 
-#===============================================================================
-# ACQUISITION FUNCTIONS
-#===============================================================================
+    def check_log_path(self):
+        log_directory = os.path.join(self.config.cwd, "logs")
+        if not os.path.exists(log_directory):
+            print("Directory logs did not exist - created a new one in {}".format(log_directory))
+            os.makedirs(log_directory)
+
+        # Generate filename
+        if self.config.loggingFile_path is None:
+            file_path = "origami_{}.log".format(self.config.startTime)
+            self.config.loggingFile_path = os.path.join(
+                log_directory, file_path)
 
     def onLibraryLink(self, evt):
         """Open selected webpage."""

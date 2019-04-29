@@ -11,10 +11,10 @@
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
 
-from toolbox import str2num, str2int
-import os.path
 import wx
+import os.path
 from wx.lib.embeddedimage import PyEmbeddedImage
+from utils.converters import str2int, str2num
 
 
 class config():
@@ -23,12 +23,14 @@ class config():
     """
 
     def __init__(self):
-
-        self.version = "1.0.1"
+        self.cwd = None
+        self.loggingFile_path = None
+        self.version = "1.0.2"
         self.links = {'home' : 'https://www.click2go.umip.com/i/s_w/ORIGAMI.html',
-                      'github' : 'https://github.com/lukasz-migas/ORIGAMI',
+                      'github' : 'https://github.com/lukasz-migas/ORIGAMI-MS',
+                      'github_origami_analyse' : 'https://github.com/lukasz-migas/ORIGAMI',
                       'cite' : 'https://doi.org/10.1016/j.ijms.2017.08.014',
-                      'newVersion' : 'https://github.com/lukasz-migas/ORIGAMI/releases'}
+                      'newVersion' : 'https://github.com/lukasz-migas/ORIGAMI-MS/releases'}
 
         self.iPolarity = None
         self.iActivationZone = None
@@ -93,10 +95,6 @@ class config():
                     self.iExponentIncre = str2num(line.split()[1])
                 if line.startswith("iBoltzmann "):
                     self.iBoltzmann = str2num(line.split()[1])
-
-#                 if line.startswith("wrensPath "):
-#                     self.wrensPath = str(line.split(" ")[1::])
-#                     print(self.wrensPath, os.path.isabs(self.wrensPath))
 
                 if line.startswith("wrensLinearName "):
                     self.wrensLinearName = str(line.split()[1])

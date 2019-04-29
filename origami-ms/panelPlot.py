@@ -13,27 +13,25 @@
 
 import wx
 import matplotlib
-from matplotlib import interactive
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
-from matplotlib.figure import Figure
-from mpl_toolkits.mplot3d import Axes3D
 from plottingWindow import plottingWindow
 from time import gmtime, strftime
 
 
-class panelPlot (wx.Panel):
+class panelPlot(wx.Panel):
 
-    def __init__(self, parent):
+    def __init__(self, parent, config):
         wx.Panel.__init__ (self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
                              size=wx.Size(350, 600), style=wx.TAB_TRAVERSAL)
 
         self.parent = parent
+        self.config = config
         self.currentPage = None
         self.startTime = (strftime("%H-%M-%S_%d-%m-%Y", gmtime()))
+        self.config.startTime = self.startTime
 
-        self.makeNotebook()
+        self.make_notebook()
 
-    def makeNotebook(self):
+    def make_notebook(self):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         # Setup notebook
         self.plotNotebook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition,
@@ -42,7 +40,7 @@ class panelPlot (wx.Panel):
         # Setup PLOT SPV
         self.panelSPV = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
                                     wx.DefaultSize, wx.TAB_TRAVERSAL)
-        self.plotNotebook.AddPage(self.panelSPV, "SPVs", False)
+        self.plotNotebook.AddPage(self.panelSPV, "Scans per Voltage", False)
 
         self.plot1 = plot1D(self.panelSPV)
         box1 = wx.BoxSizer(wx.VERTICAL)
@@ -51,7 +49,7 @@ class panelPlot (wx.Panel):
 
         self.panelTime = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
                                     wx.DefaultSize, wx.TAB_TRAVERSAL)
-        self.plotNotebook.AddPage(self.panelTime, "Acquisition", False)
+        self.plotNotebook.AddPage(self.panelTime, "Acquisition time", False)
 
         self.plot2 = plot1D(self.panelTime)
         box2 = wx.BoxSizer(wx.VERTICAL)
@@ -74,19 +72,17 @@ class panelPlot (wx.Panel):
         logSizer.Add(self.log, 1, wx.EXPAND)
         self.panelLog.SetSizer(logSizer)
 
-        self.log.Bind(wx.EVT_TEXT, self.saveLogData)
-
-#         self.panelTable = wx.Panel( self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-#                                     wx.DefaultSize, wx.TAB_TRAVERSAL )
-#         self.plotNotebook.AddPage( self.panelTable, u"CV Table", False )
+        self.log.Bind(wx.EVT_TEXT, self.save_log_data)
 
         mainSizer.Add(self.plotNotebook, 1, wx.EXPAND | wx.ALL, 1)
+
+        self.SetSize(0, 0, 420, 500)
         self.SetSizer(mainSizer)
         self.Layout()
         self.Show(True)
 
-    def saveLogData(self, evt):
-        fileName = ''.join(['ORIGAMI_log__', self.startTime, '.log'])
+    def save_log_data(self, evt):
+        fileName = self.config.loggingFile_path
         savefile = open(fileName, 'w')
         savefile.write(self.log.GetValue())
         savefile.close()
