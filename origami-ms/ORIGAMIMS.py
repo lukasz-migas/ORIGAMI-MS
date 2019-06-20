@@ -598,7 +598,7 @@ class ORIGAMIMS(object):
         Select path to the MassLynx folder
         """
 
-        dlg = wx.DirDialog(self.view, "Select MassLynx directory",
+        dlg = wx.DirDialog(self.view, "Select output directory...",
                            style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
             print(("You chose %s" % dlg.GetPath()))
