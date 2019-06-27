@@ -71,4 +71,3 @@ class plottingWindow(wx.Window):
     def sizeHandler(self, *args, **kwargs):
         if self.resize == 1:
             self.canvas.SetSize(self.GetSize())
-

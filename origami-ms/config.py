@@ -26,11 +26,11 @@ class config():
         self.cwd = None
         self.loggingFile_path = None
         self.version = "1.0.2"
-        self.links = {'home' : 'https://www.click2go.umip.com/i/s_w/ORIGAMI.html',
-                      'github' : 'https://github.com/lukasz-migas/ORIGAMI-MS',
-                      'github_origami_analyse' : 'https://github.com/lukasz-migas/ORIGAMI',
-                      'cite' : 'https://doi.org/10.1016/j.ijms.2017.08.014',
-                      'newVersion' : 'https://github.com/lukasz-migas/ORIGAMI-MS/releases'}
+        self.links = {'home': 'https://www.click2go.umip.com/i/s_w/ORIGAMI.html',
+                      'github': 'https://github.com/lukasz-migas/ORIGAMI-MS',
+                      'github_origami_analyse': 'https://github.com/lukasz-migas/ORIGAMI',
+                      'cite': 'https://doi.org/10.1016/j.ijms.2017.08.014',
+                      'newVersion': 'https://github.com/lukasz-migas/ORIGAMI-MS/releases'}
 
         self.iPolarity = None
         self.iActivationZone = None
@@ -158,7 +158,7 @@ class config():
         # Linear/Exponential/Boltzmann methods only
         if (self.iActivationMode == 'Linear' or
             self.iActivationMode == 'Exponential' or
-            self.iActivationMode == 'Boltzmann'):
+                self.iActivationMode == 'Boltzmann'):
             f.write("spv " + str(self.iSPV) + "\n")
             f.write("start " + str(self.iStartVoltage) + "\n")
             f.write("end " + str(self.iEndVoltage) + "\n")
@@ -472,4 +472,3 @@ class IconContainer:
             "IAhVIL0SBEGoAumVIAhCFUivBEEQqkB6JQiCUAXSK0EQhCqQXgmCIFSB9EoQBKEKpFeCIAgV"
             "SEj4/08YXTiH8v1hAAAAAElFTkSuQmCC")
         self.getLogo = origamiLogo.GetBitmap()
-

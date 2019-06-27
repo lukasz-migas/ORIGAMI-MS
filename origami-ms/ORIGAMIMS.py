@@ -61,10 +61,10 @@ class ORIGAMIMS(object):
         self.wrensRun = None
         self.wrensReset = None
         self.currentPath = ""
-        self.wrensInput = {'polarity':None,
-                           'activationZone':None,
-                           'method':None,
-                           'command':None}
+        self.wrensInput = {'polarity': None,
+                           'activationZone': None,
+                           'method': None,
+                           'command': None}
         # Set current working directory
         self.config.cwd = os.getcwd()
         self.logging = True
@@ -76,7 +76,7 @@ class ORIGAMIMS(object):
 
         self.check_log_path()
         # Log all events to
-        if self.logging == True:
+        if self.logging:
             sys.stdin = self.view.panelPlots.log
             sys.stdout = self.view.panelPlots.log
             sys.stderr = self.view.panelPlots.log
@@ -99,17 +99,18 @@ class ORIGAMIMS(object):
         """Open selected webpage."""
 
         # set link
-        links = {ID_helpHomepage : 'home',
-                 ID_helpGitHub : 'github',
-                 ID_helpCite : 'cite',
-                 ID_helpNewVersion : 'newVersion'}
+        links = {ID_helpHomepage: 'home',
+                 ID_helpGitHub: 'github',
+                 ID_helpCite: 'cite',
+                 ID_helpNewVersion: 'newVersion'}
 
         link = self.config.links[links[evt.GetId()]]
 
         # open webpage
         try:
             webbrowser.open(link, autoraise=1)
-        except: pass
+        except BaseException:
+            pass
 
     def onCheckParameters(self, evt):
         """
@@ -118,7 +119,8 @@ class ORIGAMIMS(object):
 
         print(("version", self.config.version))
 
-        if isinstance(self.config.iSPV, int): pass
+        if isinstance(self.config.iSPV, int):
+            pass
         else:
             msg = ("SPV value should be an integer!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -126,7 +128,8 @@ class ORIGAMIMS(object):
                            type="Error")
             return False
 
-        if isinstance(self.config.iScanTime, (int, float)): pass
+        if isinstance(self.config.iScanTime, (int, float)):
+            pass
         else:
             msg = ("Scan time value should be an integer or float!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -134,7 +137,8 @@ class ORIGAMIMS(object):
                            type="Error")
             return False
 
-        if isinstance(self.config.iStartVoltage, (int, float)): pass
+        if isinstance(self.config.iStartVoltage, (int, float)):
+            pass
         else:
             msg = ("Start voltage should be an integer or float!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -142,7 +146,8 @@ class ORIGAMIMS(object):
                            type="Error")
             return False
 
-        if isinstance(self.config.iEndVoltage, (int, float)): pass
+        if isinstance(self.config.iEndVoltage, (int, float)):
+            pass
         else:
             msg = ("End voltage should be an integer or float!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -150,7 +155,8 @@ class ORIGAMIMS(object):
                            type="Error")
             return False
 
-        if isinstance(self.config.iStepVoltage, (int, float)): pass
+        if isinstance(self.config.iStepVoltage, (int, float)):
+            pass
         else:
             msg = ("Step voltage should be an integer or float!")
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -159,7 +165,8 @@ class ORIGAMIMS(object):
             return False
 
         if self.config.iActivationMode == "Exponential":
-            if isinstance(self.config.iExponentPerct, (int, float)): pass
+            if isinstance(self.config.iExponentPerct, (int, float)):
+                pass
             else:
                 msg = ("Exponential % value should be an integer or float!")
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -167,7 +174,8 @@ class ORIGAMIMS(object):
                                type="Error")
                 return False
 
-            if isinstance(self.config.iExponentIncre, (int, float)): pass
+            if isinstance(self.config.iExponentIncre, (int, float)):
+                pass
             else:
                 msg = ("Exponential increment value should be an float!")
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
@@ -176,25 +184,26 @@ class ORIGAMIMS(object):
                 return False
 
         elif self.config.iActivationMode == "Boltzmann":
-            if isinstance(self.config.iBoltzmann, (int, float)): pass
+            if isinstance(self.config.iBoltzmann, (int, float)):
+                pass
             else:
                 msg = ("Boltzmann offset value should be an integer or float!")
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                               exceptionMsg=msg ,
+                               exceptionMsg=msg,
                                type="Error")
                 return False
 
         if (abs(self.config.iEndVoltage) <= abs(self.config.iStartVoltage)):
             msg = ('End voltage has to be larger than starting voltage')
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                           exceptionMsg=msg ,
+                           exceptionMsg=msg,
                            type="Error")
             return
 
         if (abs(self.config.iEndVoltage) > 200):
             msg = ('The highest possible voltage is 200 V. Set to default: 200')
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                           exceptionMsg=msg ,
+                           exceptionMsg=msg,
                            type="Error")
             self.config.iEndVoltage = 200
             self.view.panelControls.endVoltage_input.SetValue(str(self.config.iEndVoltage))
@@ -202,7 +211,7 @@ class ORIGAMIMS(object):
         if (abs(self.config.iStartVoltage) < 0):
             msg = ('The lowest possible voltage is 0 V. Set to default: 0')
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                           exceptionMsg=msg ,
+                           exceptionMsg=msg,
                            type="Error")
             self.config.iStartVoltage = 0
             self.view.panelControls.startVoltage_input.SetValue(str(self.config.iStartVoltage))
@@ -210,7 +219,7 @@ class ORIGAMIMS(object):
         if self.config.iSPV <= 0:
             msg = ('SPV must be larger than 0! Set to default: 3')
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                           exceptionMsg=msg ,
+                           exceptionMsg=msg,
                            type="Error")
             self.config.iSPV = 3
             self.view.panelControls.spv_input.SetValue(str(self.config.iSPV))
@@ -218,7 +227,7 @@ class ORIGAMIMS(object):
         if self.config.iScanTime <= 0:
             msg = ('Scan time must be larger than 0! Set to default: 5')
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                           exceptionMsg=msg ,
+                           exceptionMsg=msg,
                            type="Error")
             self.config.iScanTime = 5
             self.view.panelControls.scanTime_input.SetValue(str(self.config.iScanTime))
@@ -227,13 +236,13 @@ class ORIGAMIMS(object):
             if self.config.iExponentPerct < 0:
                 msg = ('Exponential % must be larger or equal to 0! Set to default: 0')
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                               exceptionMsg=msg ,
+                               exceptionMsg=msg,
                                type="Error")
                 self.config.iExponentPerct = 0
             elif self.config.iExponentPerct >= 100:
                 msg = ('Exponential % must be smaller than 100! Set to default: 0')
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                               exceptionMsg=msg ,
+                               exceptionMsg=msg,
                                type="Error")
                 self.config.iExponentPerct = 0
             self.view.panelControls.exponentialPerct_input.SetValue(str(self.config.iExponentPerct))
@@ -241,13 +250,13 @@ class ORIGAMIMS(object):
             if self.config.iExponentIncre <= 0:
                 msg = ('Exponential increment must be larger than 0! Set to default: 0.01')
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                               exceptionMsg=msg ,
+                               exceptionMsg=msg,
                                type="Error")
                 self.config.iExponentIncre = 0.01
             elif self.config.iExponentIncre > 0.075:
                 msg = ('Exponential increment must be smaller than 0.075! Set to default: 0.075')
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
-                               exceptionMsg=msg ,
+                               exceptionMsg=msg,
                                type="Error")
                 self.config.iExponentIncre = 0.075
             self.view.panelControls.exponentialIncrm_input.SetValue(str(self.config.iExponentIncre))
@@ -271,7 +280,7 @@ class ORIGAMIMS(object):
 
     def onCalculateParameters(self, evt):
         """
-        This function is to be used to setup path to save origami parameters 
+        This function is to be used to setup path to save origami parameters
         """
 
         if not self.config.iActivationMode == "User-defined":
@@ -287,7 +296,7 @@ class ORIGAMIMS(object):
                                type="Error")
                 return
         else:
-            if self.config.iScanTime == None or self.config.iScanTime == "":
+            if self.config.iScanTime is None or self.config.iScanTime == "":
                 msg = 'Please make sure you to fill in the scan time input box.'
                 dialogs.dlgBox(exceptionTitle='Mistake in the input',
                                exceptionMsg=msg,
@@ -349,12 +358,14 @@ class ORIGAMIMS(object):
                             str(self.config.iEndVoltage), ',',
                             str(self.config.iStepVoltage), ',',
                             str(totalAcqTime)])
-        wrensInput = {'polarity':self.config.iPolarity,
-                     'activationZone':self.config.iActivationZone,
-                     'method':self.config.iActivationMode,
-                     'command':wrensCMD}
-        if self.config.iPolarity == 'POSITIVE': polarity = "+VE"
-        else: polarity = "-VE"
+        wrensInput = {'polarity': self.config.iPolarity,
+                      'activationZone': self.config.iActivationZone,
+                      'method': self.config.iActivationMode,
+                      'command': wrensCMD}
+        if self.config.iPolarity == 'POSITIVE':
+            polarity = "+VE"
+        else:
+            polarity = "-VE"
         self.view.SetStatusText(''.join(["Current method: ", polarity,
                                          " mode in the ", self.config.iActivationZone,
                                          " using the ", self.config.iActivationMode,
@@ -403,12 +414,14 @@ class ORIGAMIMS(object):
                             str(self.config.iExponentIncre), ',',
                             str(totalAcqTime)])
 
-        wrensInput = {'polarity':self.config.iPolarity,
-                     'activationZone':self.config.iActivationZone,
-                     'method':self.config.iActivationMode,
-                     'command':wrensCMD}
-        if self.config.iPolarity == 'POSITIVE': polarity = "+VE"
-        else: polarity = "-VE"
+        wrensInput = {'polarity': self.config.iPolarity,
+                      'activationZone': self.config.iActivationZone,
+                      'method': self.config.iActivationMode,
+                      'command': wrensCMD}
+        if self.config.iPolarity == 'POSITIVE':
+            polarity = "+VE"
+        else:
+            polarity = "-VE"
         self.view.SetStatusText(''.join(["Current method: ", polarity,
                                          " mode in the ", self.config.iActivationZone,
                                          " using the ", self.config.iActivationMode,
@@ -428,7 +441,8 @@ class ORIGAMIMS(object):
                                  self.config.iEndVoltage,
                                  numberOfCEsteps)
         for i in range(int(numberOfCEsteps)):
-            scanPerVoltageFit = np.round(1 / (A2 + (A1 - A2) / (1 + np.exp((ColEnergyX[i] - x0) / self.config.iBoltzmann))), 0)
+            scanPerVoltageFit = np.round(
+                1 / (A2 + (A1 - A2) / (1 + np.exp((ColEnergyX[i] - x0) / self.config.iBoltzmann))), 0)
             scanPerVoltageList.append(scanPerVoltageFit * startScansPerVoltage)
             timeFit = timeFit + scanPerVoltageFit
             timeList.append(timeFit * self.config.iScanTime)
@@ -454,12 +468,14 @@ class ORIGAMIMS(object):
                             str(self.config.iBoltzmann), ',',
                             str(totalAcqTime)])
 
-        wrensInput = {'polarity':self.config.iPolarity,
-                     'activationZone':self.config.iActivationZone,
-                     'method':self.config.iActivationMode,
-                     'command':wrensCMD}
-        if self.config.iPolarity == 'POSITIVE': polarity = "+VE"
-        else: polarity = "-VE"
+        wrensInput = {'polarity': self.config.iPolarity,
+                      'activationZone': self.config.iActivationZone,
+                      'method': self.config.iActivationMode,
+                      'command': wrensCMD}
+        if self.config.iPolarity == 'POSITIVE':
+            polarity = "+VE"
+        else:
+            polarity = "-VE"
         self.view.SetStatusText(''.join(["Current method: ", polarity,
                                          " mode in the ", self.config.iActivationZone,
                                          " using the ", self.config.iActivationMode,
@@ -468,13 +484,13 @@ class ORIGAMIMS(object):
 
     def onPrepareListMethod(self):
 
-        if self.config.CSVFilePath == None:
+        if self.config.CSVFilePath is None:
             msg = 'Please load a CSV file first.'
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
                            exceptionMsg=msg,
                            type="Error")
             return
-        if self.config.iScanTime == None or self.config.iScanTime == "":
+        if self.config.iScanTime is None or self.config.iScanTime == "":
             msg = 'Please fill in appropriate fields. The scan time is empty or incorrect'
             dialogs.dlgBox(exceptionTitle='Mistake in the input',
                            exceptionMsg=msg,
@@ -487,7 +503,8 @@ class ORIGAMIMS(object):
                                       skip_header=1,
                                       delimiter=',',
                                       filling_values=0)
-        except: return
+        except BaseException:
+            return
         # Read table
         scanPerVoltageList = spvCVlist[:, 0].astype(int)
         ColEnergyX = spvCVlist[:, 1]
@@ -498,7 +515,8 @@ class ORIGAMIMS(object):
             timeFit = timeFit + i
             timeList.append(timeFit * self.config.iScanTime)
 
-        if len(scanPerVoltageList) != len(ColEnergyX): return
+        if len(scanPerVoltageList) != len(ColEnergyX):
+            return
 
         totalAcqTime = np.round((sum(scanPerVoltageList) * self.config.iScanTime) / 60, 2)
         if (totalAcqTime > 300):
@@ -525,12 +543,14 @@ class ORIGAMIMS(object):
                             SPV_list, ',',
                             CV_list])
 
-        wrensInput = {'polarity':self.config.iPolarity,
-                     'activationZone':self.config.iActivationZone,
-                     'method':self.config.iActivationMode,
-                     'command':wrensCMD}
-        if self.config.iPolarity == 'POSITIVE': polarity = "+VE"
-        else: polarity = "-VE"
+        wrensInput = {'polarity': self.config.iPolarity,
+                      'activationZone': self.config.iActivationZone,
+                      'method': self.config.iActivationMode,
+                      'command': wrensCMD}
+        if self.config.iPolarity == 'POSITIVE':
+            polarity = "+VE"
+        else:
+            polarity = "-VE"
         self.view.SetStatusText(''.join(["Current method: ", polarity,
                                          " mode in the ", self.config.iActivationZone,
                                          " using the ", self.config.iActivationMode,
@@ -539,7 +559,7 @@ class ORIGAMIMS(object):
 
     def onStartWREnSRun(self, evt):
 
-        if self.wrensCMD == None:
+        if self.wrensCMD is None:
             msg = "Are you sure you filled in correct details or pressed calculate?"
             dialogs.dlgBox(exceptionTitle='Please complete all necessary fields and press Calculate',
                            exceptionMsg=msg,
@@ -609,8 +629,8 @@ class ORIGAMIMS(object):
         """
         This function imports configuration file
         """
-        dlg = wx.FileDialog(self.view, "Open Configuration File", wildcard="*.ini" ,
-                           style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR)
+        dlg = wx.FileDialog(self.view, "Open Configuration File", wildcard="*.ini",
+                            style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
             self.config.importConfig(fileName=fileName, e=None)
@@ -636,15 +656,15 @@ class ORIGAMIMS(object):
         """
         This function exports configuration file
         """
-        dlg = wx.FileDialog(self.view, "Save As Configuration File", wildcard="*.ini" ,
-                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        dlg = wx.FileDialog(self.view, "Save As Configuration File", wildcard="*.ini",
+                            style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
             self.config.exportConfig(fileName=fileName, e=None)
 
     def onExportParameters(self, evt):
-        dlg = wx.FileDialog(self.view, "Save As ORIGAMI configuration File", wildcard="*.conf" ,
-                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        dlg = wx.FileDialog(self.view, "Save As ORIGAMI configuration File", wildcard="*.conf",
+                            style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         dlg.SetFilename('origami.conf')
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
@@ -652,10 +672,10 @@ class ORIGAMIMS(object):
 
     def onLoadCSVList(self, evt):
         """
-        This function loads a two column list with Collision voltage | number of scans 
+        This function loads a two column list with Collision voltage | number of scans
         """
-        dlg = wx.FileDialog(self.view, "Choose a file:", wildcard="*.txt; *.csv" ,
-                           style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR)
+        dlg = wx.FileDialog(self.view, "Choose a file:", wildcard="*.txt; *.csv",
+                            style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
             print(("You chose %s" % dlg.GetPath()))
             self.config.CSVFilePath = dlg.GetPath()

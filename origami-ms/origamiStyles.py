@@ -39,7 +39,7 @@ LISTCTRL_SORT = 1
 def makeMenuItem(parent, text, id=-1, bitmap=None):
     """ Helper function to make a menu item with or without bitmap image """
     menuItem = wx.MenuItem(parent, id, text)
-    if bitmap != None:
+    if bitmap is not None:
         menuItem.SetBitmap(bitmap)
 
     return menuItem
@@ -76,9 +76,9 @@ def makeStaticText(parent, text):
 
 def makeTextCtrl(parent):
     textBox = wx.TextCtrl(parent, wx.ID_ANY,
-                            ""  , wx.DefaultPosition,
-                            wx.DefaultSize,
-                            TEXT_STYLE_CV_R_L)
+                          "", wx.DefaultPosition,
+                          wx.DefaultSize,
+                          TEXT_STYLE_CV_R_L)
 
     return textBox
 
@@ -111,9 +111,9 @@ class validator(wx.Validator):
 
         # define navigation keys
         navKeys = (wx.WXK_HOME, wx.WXK_LEFT, wx.WXK_UP,
-                    wx.WXK_END, wx.WXK_RIGHT, wx.WXK_DOWN,
-                    wx.WXK_NUMPAD_HOME, wx.WXK_NUMPAD_LEFT, wx.WXK_NUMPAD_UP,
-                    wx.WXK_NUMPAD_END, wx.WXK_NUMPAD_RIGHT, wx.WXK_NUMPAD_DOWN)
+                   wx.WXK_END, wx.WXK_RIGHT, wx.WXK_DOWN,
+                   wx.WXK_NUMPAD_HOME, wx.WXK_NUMPAD_LEFT, wx.WXK_NUMPAD_UP,
+                   wx.WXK_NUMPAD_END, wx.WXK_NUMPAD_RIGHT, wx.WXK_NUMPAD_DOWN)
 
         # navigation keys
         if key in navKeys or key < wx.WXK_SPACE or key == wx.WXK_DELETE:
@@ -159,4 +159,3 @@ class validator(wx.Validator):
             wx.Bell()
             return
     # ----
-

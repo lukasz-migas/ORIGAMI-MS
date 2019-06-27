@@ -14,7 +14,7 @@
 from wx import NewId
 
 """
-Event IDs 
+Event IDs
 """
 
 ID_setMassLynxPath = NewId()

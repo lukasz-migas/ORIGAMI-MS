@@ -96,14 +96,18 @@ def GetMaxes(axes, xmin=None, xmax=None):
     if len(yvals) != 0 and len(xvals) != 0:
         ymin = np.amin(np.ravel(yvals))
         ymax = np.amax(np.ravel(yvals))
-        if xmin == None or xmax == None:
+        if xmin is None or xmax is None:
             xmin = np.amin(np.ravel(xvals))
             xmax = np.amax(np.ravel(xvals))
 
-        if xmin > xmax: xmin, xmax = xmax, xmin
-        if ymin > ymax: ymin, ymax = ymax, ymin
-        if xmin == xmax: xmax = xmin * 1.0001
-        if ymin == ymax: ymax = ymin * 1.0001
+        if xmin > xmax:
+            xmin, xmax = xmax, xmin
+        if ymin > ymax:
+            ymin, ymax = ymax, ymin
+        if xmin == xmax:
+            xmax = xmin * 1.0001
+        if ymin == ymax:
+            ymax = ymin * 1.0001
 
         out = [xmin, ymin, xmax, ymax]
     else:
@@ -126,10 +130,14 @@ def GetStart(axes):
     xmax = np.amax(outputs[:, 2])
     ymax = np.amax(outputs[:, 3])
 
-    if xmin > xmax: xmin, xmax = xmax, xmin
-    if ymin > ymax: ymin, ymax = ymax, ymin
-    if xmin == xmax: xmax = xmin * 1.0001
-    if ymin == ymax: ymax = ymin * 1.0001
+    if xmin > xmax:
+        xmin, xmax = xmax, xmin
+    if ymin > ymax:
+        ymin, ymax = ymax, ymin
+    if xmin == xmax:
+        xmax = xmin * 1.0001
+    if ymin == ymax:
+        ymax = ymin * 1.0001
 
     out = [xmin, ymin, xmax, ymax]
     return out
@@ -139,7 +147,7 @@ class GetXValues:
 
     def __init__(self, axes):
         """
-        This function retrieves the x-axis info 
+        This function retrieves the x-axis info
         """
         self.axes = None
         self.canvas = None
@@ -209,8 +217,7 @@ class ZoomBox:
                  spancoords='data',
                  button=None,
                  data_lims=None):
-#                  integrate=0, smash=0):
-
+        #                  integrate=0, smash=0):
         """
         Create a selector in axes.  When a selection is made, clear
         the span and call onselect with
@@ -287,11 +294,15 @@ class ZoomBox:
             self.data_lims = data_lims
 
         xmin, ymin, xmax, ymax = self.data_lims
-        if xmin > xmax: xmin, xmax = xmax, xmin
-        if ymin > ymax: ymin, ymax = ymax, ymin
+        if xmin > xmax:
+            xmin, xmax = xmax, xmin
+        if ymin > ymax:
+            ymin, ymax = ymax, ymin
         # assure that x and y values are not equal
-        if xmin == xmax: xmax = xmin * 1.0001
-        if ymin == ymax: ymax = ymin * 1.0001
+        if xmin == xmax:
+            xmax = xmin * 1.0001
+        if ymin == ymax:
+            ymax = ymin * 1.0001
         for axes in self.axes:
             axes.set_xlim(xmin, xmax)
             axes.set_ylim(ymin, ymax)
@@ -340,12 +351,12 @@ class ZoomBox:
 
         # TO DO: When right click, enable extraction of mz or dt
         if self.validButtons is not None:
-            if not evt.button in self.validButtons:
+            if evt.button not in self.validButtons:
                 if evt.button == 3:
-#                     print('right click');
-                    return True;
+                    #                     print('right click');
+                    return True
                 elif evt.button == 2 and self.eventrelease is None:
-#                     for axes in self.axes:
+                    #                     for axes in self.axes:
                     axes = self.axes[0]
                     Xvalues = axes.get_xlim()
                     Yvalues = axes.get_ylim()
@@ -354,7 +365,7 @@ class ZoomBox:
                     pub.sendMessage('add2table', xvalsMin=Xvalues[0], xvalsMax=Xvalues[1], yvalsMax=Yvalues[1])
 #                     pub.sendMessage('add2table', ((values)))
 #                         pub.sendMessage('add2table', values[0], )
-                    return True;
+                    return True
                 else:
                     return False
 
@@ -384,7 +395,8 @@ class ZoomBox:
     def press(self, evt):
         'on button press event'
         # Is the correct button pressed within the correct axes?
-        if self.ignore(evt): return
+        if self.ignore(evt):
+            return
 
         self.buttonDown = True
 
@@ -397,7 +409,8 @@ class ZoomBox:
 
     def release(self, evt):
         'on button release event'
-        if self.eventpress is None or (self.ignore(evt) and not self.buttonDown): return
+        if self.eventpress is None or (self.ignore(evt) and not self.buttonDown):
+            return
         self.buttonDown = False
 
         # make the box/line invisible again
@@ -416,11 +429,15 @@ class ZoomBox:
             # print GetMaxes(evt.inaxes)
 
             xmin, ymin, xmax, ymax = self.data_lims
-            if xmin > xmax: xmin, xmax = xmax, xmin
-            if ymin > ymax: ymin, ymax = ymax, ymin
+            if xmin > xmax:
+                xmin, xmax = xmax, xmin
+            if ymin > ymax:
+                ymin, ymax = ymax, ymin
             # assure that x and y values are not equal
-            if xmin == xmax: xmax = xmin * 1.0001
-            if ymin == ymax: ymax = ymin * 1.0001
+            if xmin == xmax:
+                xmax = xmin * 1.0001
+            if ymin == ymax:
+                ymax = ymin * 1.0001
 
             # Check if a zoom out is necessary
             zoomout = False
@@ -456,11 +473,15 @@ class ZoomBox:
             raise ValueError('spancoords must be "data" or "pixels"')
 
         # assure that min<max values
-        if xmin > xmax: xmin, xmax = xmax, xmin
-        if ymin > ymax: ymin, ymax = ymax, ymin
+        if xmin > xmax:
+            xmin, xmax = xmax, xmin
+        if ymin > ymax:
+            ymin, ymax = ymax, ymin
         # assure that x and y values are not equal
-        if xmin == xmax: xmax = xmin * 1.0001
-        if ymin == ymax: ymax = ymin * 1.0001
+        if xmin == xmax:
+            xmax = xmin * 1.0001
+        if ymin == ymax:
+            ymax = ymin * 1.0001
 
         # Switch to span if a small delta y is used
         try:
@@ -507,13 +528,16 @@ class ZoomBox:
             dat = evt.inaxes.lines[0].get_ydata()
             npts = len(dat)
             indx = int(round((npts - 1) * (evt.xdata - x0) / (x1 - x0)))
-            if indx > (npts - 1): indx = npts - 1
-            if indx < 0: indx = 0
+            if indx > (npts - 1):
+                indx = npts - 1
+            if indx < 0:
+                indx = 0
             for line in evt.inaxes.lines:
                 dat = line.get_ydata()
                 if indx < len(dat):
                     value.append(dat[indx])
-            if value == []: value = 0.0
+            if value == []:
+                value = 0.0
 
             self.onselect(xmin, xmax, value, ymin, ymax)  # zeros are for consistency with box zoom
 
@@ -534,10 +558,10 @@ class ZoomBox:
         return False
 
     def OnMotion(self, evt):
-#         pub.sendMessage('newxy', xpos=evt.xdata, ypos=evt.ydata)
-
+        #         pub.sendMessage('newxy', xpos=evt.xdata, ypos=evt.ydata)
         'on motion notify event if box/line is wanted'
-        if self.eventpress is None or self.ignore(evt): return
+        if self.eventpress is None or self.ignore(evt):
+            return
         x, y = evt.xdata, evt.ydata  # actual position (with
         #   (button still pressed)
 
@@ -545,12 +569,16 @@ class ZoomBox:
 
         minx, maxx = self.eventpress.xdata, x  # click-x and actual mouse-x
         miny, maxy = self.eventpress.ydata, y  # click-y and actual mouse-y
-        if minx > maxx: minx, maxx = maxx, minx  # get them in the right order
-        if miny > maxy: miny, maxy = maxy, miny
+        if minx > maxx:
+            minx, maxx = maxx, minx  # get them in the right order
+        if miny > maxy:
+            miny, maxy = maxy, miny
 
         # Checks whether values are not empty (or are float)
-        if not isinstance(minx, float) or not isinstance(maxx, float): return
-        if not isinstance(miny, float) or not isinstance(maxy, float): return
+        if not isinstance(minx, float) or not isinstance(maxx, float):
+            return
+        if not isinstance(miny, float) or not isinstance(maxy, float):
+            return
 
         # Changes from a yellow box to a colored line
         for axes in self.axes:
@@ -588,13 +616,16 @@ class ZoomBox:
             dat = evt.inaxes.lines[0].get_ydata()
             npts = len(dat)
             indx = int(round((npts - 1) * (evt.xdata - x0) / (x1 - x0)))
-            if indx > (npts - 1): indx = npts - 1
-            if indx < 0: indx = 0
+            if indx > (npts - 1):
+                indx = npts - 1
+            if indx < 0:
+                indx = 0
             for line in evt.inaxes.lines:
                 dat = line.get_ydata()
                 if indx < len(dat):
                     value.append(dat[indx])
-            if value == []: value = 0.0
+            if value == []:
+                value = 0.0
 
             self.onmove_callback(minx, maxx, value, miny, maxy)  # zeros are for consistency with box zoom
         self.update()

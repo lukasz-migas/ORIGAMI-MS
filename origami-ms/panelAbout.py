@@ -12,7 +12,7 @@ class panelAbout(wx.MiniFrame):
 
     def __init__(self, parent, presenter, frameTitle, config, icons):
         wx.MiniFrame.__init__(self, parent, -1, frameTitle, style=wx.DEFAULT_FRAME_STYLE
-                       & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX))
+                              & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX))
 
         self.parent = parent
         self.presenter = presenter
@@ -49,7 +49,8 @@ class panelAbout(wx.MiniFrame):
         copyright = wx.StaticText(panel, -1, "(c) 2017 Lukasz G. Migas")
         copyright.SetFont(wx.SMALL_FONT)
 
-        message = wx.StaticText(panel, -1, 'If you encounter any problems, have questions or would like to send some feedback, please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.')
+        message = wx.StaticText(
+            panel, -1, 'If you encounter any problems, have questions or would like to send some feedback, please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.')
         message.SetFont(wx.SMALL_FONT)
         university = wx.StaticText(panel, -1, "University of Manchester")
         university.SetFont(wx.SMALL_FONT)

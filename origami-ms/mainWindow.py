@@ -41,7 +41,7 @@ class MyFrame(wx.Frame):
         try:
             icon = wx.Icon('icon.ico', wx.BITMAP_TYPE_ICO, 16, 16)
             self.SetIcon(icon)
-        except:
+        except BaseException:
             pass
 
         # Setup Notebook manager
@@ -120,4 +120,3 @@ class MyFrame(wx.Frame):
         if xpos is not None and ypos is not None:
             self.SetStatusText("X=%.2f Y=%.2f" % (xpos, ypos), number=0)
         pass
-

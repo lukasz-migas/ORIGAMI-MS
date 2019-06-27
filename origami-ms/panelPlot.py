@@ -20,8 +20,8 @@ from time import gmtime, strftime
 class panelPlot(wx.Panel):
 
     def __init__(self, parent, config):
-        wx.Panel.__init__ (self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                             size=wx.Size(350, 600), style=wx.TAB_TRAVERSAL)
+        wx.Panel.__init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                          size=wx.Size(350, 600), style=wx.TAB_TRAVERSAL)
 
         self.parent = parent
         self.config = config
@@ -39,7 +39,7 @@ class panelPlot(wx.Panel):
 
         # Setup PLOT SPV
         self.panelSPV = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                    wx.DefaultSize, wx.TAB_TRAVERSAL)
+                                 wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelSPV, "Scans per Voltage", False)
 
         self.plot1 = plot1D(self.panelSPV)
@@ -48,7 +48,7 @@ class panelPlot(wx.Panel):
         self.panelSPV.SetSizer(box1)
 
         self.panelTime = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                    wx.DefaultSize, wx.TAB_TRAVERSAL)
+                                  wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelTime, "Acquisition time", False)
 
         self.plot2 = plot1D(self.panelTime)
@@ -58,13 +58,13 @@ class panelPlot(wx.Panel):
 
         # Setup LOG
         self.panelLog = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                   wx.DefaultSize, wx.TAB_TRAVERSAL)
+                                 wx.DefaultSize, wx.TAB_TRAVERSAL)
 
         self.plotNotebook.AddPage(self.panelLog, "ORIGAMI Log", False)
 
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_WORDWRAP
         self.log = wx.TextCtrl(self.panelLog, wx.ID_ANY, size=(-1, -1),
-                          style=style)
+                               style=style)
         self.log.SetBackgroundColour(wx.BLACK)
         self.log.SetForegroundColour(wx.GREEN)
 
@@ -99,8 +99,10 @@ class plot1D(plottingWindow):
 
         self.plotflag = True  # Used only if saving data
         self.zoomtype = zoom
-        if axesSize == None: self._axes = [0.15, 0.2, 0.8, 0.7]
-        else: self._axes = axesSize
+        if axesSize is None:
+            self._axes = [0.15, 0.2, 0.8, 0.7]
+        else:
+            self._axes = axesSize
         self.xlabel = xlabel
         self.ylabel = ylabel
         self.figure.set_facecolor('white')
@@ -117,4 +119,3 @@ class plot1D(plottingWindow):
 
         self.plotSPV.set_xlabel(self.xlabel, fontsize=fontsize, weight='normal')
         self.plotSPV.set_ylabel(self.ylabel, fontsize=fontsize, weight='normal')
-
