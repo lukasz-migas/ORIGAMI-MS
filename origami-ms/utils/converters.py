@@ -42,15 +42,15 @@ def isempty(input):
         else:
             out = False
     except (TypeError, ValueError, AttributeError):
-        print('Could not determine whether object is empty. Output set to FALSE')
+        print("Could not determine whether object is empty. Output set to FALSE")
         out = False
     return out
 
 
 def str2bool(s):
-    if s == 'True':
+    if s == "True":
         return True
-    elif s == 'False':
+    elif s == "False":
         return False
     else:
         raise ValueError

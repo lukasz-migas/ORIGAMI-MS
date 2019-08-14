@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
 #    This program is free software. Feel free to redistribute it and/or
 #    modify it under the condition you cite and credit the authors whenever
 #    appropriate.
@@ -10,7 +8,6 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
-
 import wx
 
 # Styles
@@ -47,38 +44,30 @@ def makeMenuItem(parent, text, id=-1, bitmap=None):
 
 def makeStaticBox(parent, title, size, color, id=-1):
     staticBox = wx.StaticBox(parent, id, title, size=size)
-#     font = wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD)
-#     staticBox.SetForegroundColour(color)
-#     staticBox.SetFont(font)
+    #     font = wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+    #     staticBox.SetForegroundColour(color)
+    #     staticBox.SetFont(font)
 
     return staticBox
 
 
 def makeToggleBtn(parent, text, colorOff):
-    toggleBtn = wx.ToggleButton(parent, wx.ID_ANY,
-                                text, wx.DefaultPosition,
-                                wx.Size(TGL_SIZE, -1), 0)
-#     font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
-#     toggleBtn.SetFont(font)
-#     toggleBtn.SetForegroundColour(colorOff)
+    toggleBtn = wx.ToggleButton(parent, wx.ID_ANY, text, wx.DefaultPosition, wx.Size(TGL_SIZE, -1), 0)
+    #     font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+    #     toggleBtn.SetFont(font)
+    #     toggleBtn.SetForegroundColour(colorOff)
 
     return toggleBtn
 
 
 def makeStaticText(parent, text):
-    textBox = wx.StaticText(parent, wx.ID_ANY,
-                            text, wx.DefaultPosition,
-                            wx.DefaultSize,
-                            TEXT_STYLE_CV_R_L)
+    textBox = wx.StaticText(parent, wx.ID_ANY, text, wx.DefaultPosition, wx.DefaultSize, TEXT_STYLE_CV_R_L)
 
     return textBox
 
 
 def makeTextCtrl(parent):
-    textBox = wx.TextCtrl(parent, wx.ID_ANY,
-                          "", wx.DefaultPosition,
-                          wx.DefaultSize,
-                          TEXT_STYLE_CV_R_L)
+    textBox = wx.TextCtrl(parent, wx.ID_ANY, "", wx.DefaultPosition, wx.DefaultSize, TEXT_STYLE_CV_R_L)
 
     return textBox
 
@@ -90,18 +79,22 @@ class validator(wx.Validator):
         wx.Validator.__init__(self)
         self.flag = flag
         self.Bind(wx.EVT_CHAR, self.OnChar)
+
     # ----
 
     def Clone(self):
         return validator(self.flag)
+
     # ----
 
     def TransferToWindow(self):
         return True
+
     # ----
 
     def TransferFromWindow(self):
         return True
+
     # ----
 
     def OnChar(self, evt):
@@ -110,10 +103,20 @@ class validator(wx.Validator):
         key = evt.GetKeyCode()
 
         # define navigation keys
-        navKeys = (wx.WXK_HOME, wx.WXK_LEFT, wx.WXK_UP,
-                   wx.WXK_END, wx.WXK_RIGHT, wx.WXK_DOWN,
-                   wx.WXK_NUMPAD_HOME, wx.WXK_NUMPAD_LEFT, wx.WXK_NUMPAD_UP,
-                   wx.WXK_NUMPAD_END, wx.WXK_NUMPAD_RIGHT, wx.WXK_NUMPAD_DOWN)
+        navKeys = (
+            wx.WXK_HOME,
+            wx.WXK_LEFT,
+            wx.WXK_UP,
+            wx.WXK_END,
+            wx.WXK_RIGHT,
+            wx.WXK_DOWN,
+            wx.WXK_NUMPAD_HOME,
+            wx.WXK_NUMPAD_LEFT,
+            wx.WXK_NUMPAD_UP,
+            wx.WXK_NUMPAD_END,
+            wx.WXK_NUMPAD_RIGHT,
+            wx.WXK_NUMPAD_DOWN,
+        )
 
         # navigation keys
         if key in navKeys or key < wx.WXK_SPACE or key == wx.WXK_DELETE:
@@ -135,22 +138,22 @@ class validator(wx.Validator):
             return
 
         # int only
-        elif self.flag == 'int' and chr(key) in '-0123456789eE':
+        elif self.flag == "int" and chr(key) in "-0123456789eE":
             evt.Skip()
             return
 
         # positive int only
-        elif self.flag == 'intPos' and chr(key) in '0123456789eE':
+        elif self.flag == "intPos" and chr(key) in "0123456789eE":
             evt.Skip()
             return
 
         # floats only
-        elif self.flag == 'float' and (chr(key) in '-0123456789.eE'):
+        elif self.flag == "float" and (chr(key) in "-0123456789.eE"):
             evt.Skip()
             return
 
         # positive floats only
-        elif self.flag == 'floatPos' and (chr(key) in '0123456789.eE'):
+        elif self.flag == "floatPos" and (chr(key) in "0123456789.eE"):
             evt.Skip()
             return
 
@@ -158,4 +161,5 @@ class validator(wx.Validator):
         else:
             wx.Bell()
             return
+
     # ----

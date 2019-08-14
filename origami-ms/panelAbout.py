@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-
 # load libs
 import wx
-from IDs import ID_helpHomepage, ID_helpGitHub, ID_helpCite
+from IDs import ID_helpCite
+from IDs import ID_helpGitHub
+from IDs import ID_helpHomepage
 
 # load modules
 
@@ -11,8 +12,13 @@ class panelAbout(wx.MiniFrame):
     """About panel."""
 
     def __init__(self, parent, presenter, frameTitle, config, icons):
-        wx.MiniFrame.__init__(self, parent, -1, frameTitle, style=wx.DEFAULT_FRAME_STYLE
-                              & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX))
+        wx.MiniFrame.__init__(
+            self,
+            parent,
+            -1,
+            frameTitle,
+            style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX),
+        )
 
         self.parent = parent
         self.presenter = presenter
@@ -39,10 +45,9 @@ class panelAbout(wx.MiniFrame):
         image = wx.StaticBitmap(panel, -1, self.icons.getLogo)
 
         title = wx.StaticText(panel, -1, "ORIGAMI")
-        title.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS,
-                              wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
+        title.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
 
-        versionLabel = 'Version %s' % self.config.version
+        versionLabel = "Version %s" % self.config.version
         version = wx.StaticText(panel, -1, versionLabel, style=wx.ALIGN_CENTRE)
         version.SetFont(wx.SMALL_FONT)
 
@@ -50,19 +55,22 @@ class panelAbout(wx.MiniFrame):
         copyright.SetFont(wx.SMALL_FONT)
 
         message = wx.StaticText(
-            panel, -1, 'If you encounter any problems, have questions or would like to send some feedback, please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.')
+            panel,
+            -1,
+            "If you encounter any problems, have questions or would like to send some feedback, please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.",
+        )
         message.SetFont(wx.SMALL_FONT)
         university = wx.StaticText(panel, -1, "University of Manchester")
         university.SetFont(wx.SMALL_FONT)
 
         homepageBtn = wx.Button(panel, ID_helpHomepage, "Homepage", size=(150, -1))
-        homepageBtn.Bind(wx.EVT_BUTTON, self.presenter.onLibraryLink)
+        homepageBtn.Bind(wx.EVT_BUTTON, self.presenter.on_open_link)
 
         githubBtn = wx.Button(panel, ID_helpGitHub, "GitHub", size=(150, -1))
-        githubBtn.Bind(wx.EVT_BUTTON, self.presenter.onLibraryLink)
+        githubBtn.Bind(wx.EVT_BUTTON, self.presenter.on_open_link)
 
         citeBtn = wx.Button(panel, ID_helpCite, "How to Cite", size=(150, -1))
-        citeBtn.Bind(wx.EVT_BUTTON, self.presenter.onLibraryLink)
+        citeBtn.Bind(wx.EVT_BUTTON, self.presenter.on_open_link)
 
         # pack element
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -85,9 +93,11 @@ class panelAbout(wx.MiniFrame):
 
         sizer.Fit(panel)
         return sizer
+
     # ----
 
     def onClose(self, evt):
         """Destroy this frame."""
         self.Destroy()
+
     # ----

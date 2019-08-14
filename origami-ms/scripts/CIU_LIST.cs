@@ -6,10 +6,10 @@
 
 
 // CONSTANTS (don't change...)
-int waitTime = 100; // don't change 
+int waitTime = 100; // don't change
 int test = 1;
 int multiplier = 1000; // it should be 1000, used for testing
-int splitter = 20; // 
+int splitter = 20; //
 int startStopCounter = 3; // determines how many scans the start/stop should operate for
 /// ******* \\\
 
@@ -17,22 +17,22 @@ int startStopCounter = 3; // determines how many scans the start/stop should ope
 public override void main()
 {
    string[] userSettings=Argument.Split(',');
-  
-  string disclaimerText = 
-    @"    
+
+  string disclaimerText =
+    @"
         ----------- MESSAGE FROM THE AUTHORS-----------
-    This program is free software. Feel free to redistribute it and/or modify it 
-    under the condition you cite and credit the authors whenever appropriate. 
-    The program is distributed in the hope that it will be useful but is provided 
-    WITHOUT ANY WARRANTY! 
-                          
+    This program is free software. Feel free to redistribute it and/or modify it
+    under the condition you cite and credit the authors whenever appropriate.
+    The program is distributed in the hope that it will be useful but is provided
+    WITHOUT ANY WARRANTY!
+
     If you encounter any problems, have questions or would like to send some
     love/hate, please send to Lukasz G. Migas (lukasz.migas@manchester.ac.uk)
     ----------- MESSAGE FROM THE AUTHORS -----------
     ";
-                          
+
   print(disclaimerText);
-  string parametersInfo = 
+  string parametersInfo =
     @"    Available parameters:
     Activation type: 'TRAP' or 'CONE' [string]
     Ion polarity: 'POSITIVE' or 'NEGATIVE' [string]
@@ -40,11 +40,11 @@ public override void main()
     List of SPVs: sorted of length n, separated by space [integer]
     List of CVs: sorted of length n, separated by space [float]
     ";
-  
+
   print(parametersInfo);
- 
-  
-  // Split the text into parts 
+
+
+  // Split the text into parts
   print("Your parameters:");
   string activationType=userSettings[0]; print("Activation Type: "+activationType);
   string ionPolarity=userSettings[1]; print("Ion Polarity: "+ionPolarity);
@@ -52,7 +52,7 @@ public override void main()
   string scanPerVoltageListSt=userSettings[3]; print("Scans per Voltages: "+scanPerVoltageListSt);
   string collisionVoltageListSt=userSettings[4]; print("Collision Voltages: "+collisionVoltageListSt);
 
-  int scantime = Int32.Parse(scantimeSt); 
+  int scantime = Int32.Parse(scantimeSt);
 
    if ((scantime < 1) || (scantime > 5))
   {
@@ -60,7 +60,7 @@ public override void main()
     return;
   }
 
-  // Trim the list 
+  // Trim the list
   scanPerVoltageListSt = scanPerVoltageListSt.TrimStart('[');
   scanPerVoltageListSt = scanPerVoltageListSt.TrimEnd(']');
 
@@ -85,7 +85,7 @@ public override void main()
   }
 
   double endVoltage = listOfCVs[listOfCVs.Count -1];
-  
+
   int numberOfScans = 0;
   for (int i=0; i < listOfSPVs.Count; i++)
   {
@@ -99,16 +99,16 @@ public override void main()
   print("Number of scans: "+ numberOfScans.ToString());
 
   print("");
-  print("----------- JUST IN CASE -----------"); 
+  print("----------- JUST IN CASE -----------");
   print("If you encounter problems, please run the StopWREnS");
   print("script provided and Reinitilise MassLynx");
   print("----------- JUST IN CASE -----------");
   print("");
-  
+
   // Blanks
-  string wrensCMD; 
-  string startCMD; 
-  string resetCMD; 
+  string wrensCMD;
+  string startCMD;
+  string resetCMD;
   string getValueFrom;
 
   if (activationType == "TRAP" || activationType == "trap")
@@ -139,14 +139,14 @@ public override void main()
     if (ionPolarity == "POSITIVE")
     {
       wrensCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,";
-      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-20,false"; 
+      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-20,false";
       resetCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,30,false";
       getValueFrom = "SAMPLE_CONE_VOLTAGE_SETTING";
     }
     else if (ionPolarity == "NEGATIVE")
     {
       wrensCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING, -";
-      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,20,false"; 
+      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,20,false";
       resetCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-30,false";
       getValueFrom = "SAMPLE_CONE_VOLTAGE_SETTING";
     }
@@ -188,9 +188,9 @@ public override void main()
     ce = listOfCVs[i];
     while (scanPerVoltage > splitter)
     {
-      // For some reason WREnS has a built-in timeout, so when the SPV is too large (above 23) then it will 
+      // For some reason WREnS has a built-in timeout, so when the SPV is too large (above 23) then it will
       // give an error. This while function prevents that from happening by restricting SPV to maximum
-      // of the splitter. 
+      // of the splitter.
         int difference = scanPerVoltage-splitter;
         send_cmd("initPropertyArraysV");
         send_cmd(wrensCMD+ce.ToString()+",false");
@@ -198,7 +198,7 @@ public override void main()
         wait(splitter*scantime*multiplier);
         scanPerVoltage = scanPerVoltage-splitter;
 		print("Current trap CE (V): "+(get_setting(getValueFrom).ToString())+" Set CE: "+ce.ToString()+" SPV: "+splitter.ToString()+" remaining SPVs: "+difference.ToString()+"/"+scanPerVoltageSave.ToString());
-    } 
+    }
       // Initilises property banks and clears previous ones
       send_cmd("initPropertyArraysV");
       send_cmd(wrensCMD+ce.ToString()+",false");
@@ -238,7 +238,7 @@ public override void main()
     disable_data_capture();
     send_cmd("initPropertyArraysV");//clears old property banks
     stop_function("WrensStartScan","writePropertyBankV");
-    print("Finished ramping Collision Voltage."); 
+    print("Finished ramping Collision Voltage.");
   }
  {
    print("Could not connect to the EPC");

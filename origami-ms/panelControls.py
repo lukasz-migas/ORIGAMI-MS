@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
 #    This program is free software. Feel free to redistribute it and/or
 #    modify it under the condition you cite and credit the authors whenever
 #    appropriate.
@@ -10,17 +8,21 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
-
 import wx
-from origamiStyles import makeStaticBox, makeStaticText, validator, TXTBOX_SIZE, TEXT_STYLE_CV_R_L
-from utils.converters import str2int, str2num
+from origamiStyles import makeStaticBox
+from origamiStyles import makeStaticText
+from origamiStyles import TEXT_STYLE_CV_R_L
+from origamiStyles import TXTBOX_SIZE
+from origamiStyles import validator
+from utils.converters import str2int
+from utils.converters import str2num
 
 
-class panelControls (wx.Panel):
-
+class panelControls(wx.Panel):
     def __init__(self, parent, presenter, config):
-        wx.Panel.__init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                          size=wx.Size(600, 400), style=wx.TAB_TRAVERSAL)
+        wx.Panel.__init__(
+            self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(600, 400), style=wx.TAB_TRAVERSAL
+        )
 
         self.parent = parent
         self.presenter = presenter
@@ -37,8 +39,9 @@ class panelControls (wx.Panel):
         # Prepare notebooks
         self.settingsBook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
 
-        self.settingsBook_pane1 = wx.Panel(self.settingsBook, wx.ID_ANY,
-                                           wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.settingsBook_pane1 = wx.Panel(
+            self.settingsBook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL
+        )
         self.settingsBook.AddPage(self.settingsBook_pane1, "Activation", False)
         self.make_origami_page()
         mainSizer.Add(self.settingsBook, 1, wx.EXPAND | wx.ALL, 0)
@@ -87,26 +90,41 @@ class panelControls (wx.Panel):
 
     def make_polarity_box(self):
 
-        self.polarityBox = wx.RadioBox(self.settingsBook_pane1, wx.ID_ANY, "Polarity",
-                                       choices=["Positive        ", "Negative        "],
-                                       majorDimension=0, style=wx.RA_SPECIFY_COLS,
-                                       size=(200, -1))
+        self.polarityBox = wx.RadioBox(
+            self.settingsBook_pane1,
+            wx.ID_ANY,
+            "Ion polarity",
+            choices=["Positive        ", "Negative        "],
+            majorDimension=0,
+            style=wx.RA_SPECIFY_COLS,
+            size=(200, -1),
+        )
         self.polarityBox.SetSelection(0)
 
     def make_region_box(self):
 
-        self.activationZone = wx.RadioBox(self.settingsBook_pane1, wx.ID_ANY, "Region",
-                                          choices=["Cone              ", "Trap             "],
-                                          majorDimension=0, style=wx.RA_SPECIFY_COLS,
-                                          size=(200, -1))
+        self.activationZone = wx.RadioBox(
+            self.settingsBook_pane1,
+            wx.ID_ANY,
+            "Activation region",
+            choices=["Cone              ", "Trap             "],
+            majorDimension=0,
+            style=wx.RA_SPECIFY_COLS,
+            size=(200, -1),
+        )
         self.activationZone.SetSelection(1)
 
     def make_activation_box(self):
 
-        self.activationType = wx.RadioBox(self.settingsBook_pane1, wx.ID_ANY, "Method",
-                                          choices=["Linear", "Exponential", "Boltzmann", "User-defined"],
-                                          majorDimension=2, style=wx.RA_SPECIFY_COLS,
-                                          size=(200, -1))
+        self.activationType = wx.RadioBox(
+            self.settingsBook_pane1,
+            wx.ID_ANY,
+            "Activation method",
+            choices=["Linear", "Exponential", "Boltzmann", "User-defined"],
+            majorDimension=2,
+            style=wx.RA_SPECIFY_COLS,
+            size=(200, -1),
+        )
         self.activationType.SetSelection(0)
 
     def make_origami_parameters_box(self):
@@ -116,61 +134,79 @@ class panelControls (wx.Panel):
         origamiMainSizer = wx.StaticBoxSizer(origamiBox, wx.HORIZONTAL)
 
         spv_label = makeStaticText(self.settingsBook_pane1, "Scans per Voltage")
-        self.spv_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                     validator=validator('intPos'))
+        self.spv_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("intPos")
+        )
         info_msg = "Scans per voltage - number of scans per voltage for each collision voltage. Value type: Integer"
         self.spv_input.SetToolTip(wx.ToolTip(info_msg))
 
         scanTime_label = makeStaticText(self.settingsBook_pane1, "Scan time (s)")
-        self.scanTime_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                          validator=validator('floatPos'))
-        info_msg = "Scan time - length of each scan. Has to be the same as in MassLynx acquisition window!" + \
-            " Value type: Float. Range: 0.1-5"
+        self.scanTime_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
+        info_msg = (
+            "Scan time - length of each scan. Has to be the same as in MassLynx acquisition window!"
+            + " Value type: Float. Range: 0.1-5"
+        )
         self.scanTime_input.SetToolTip(wx.ToolTip(info_msg))
 
         startVoltage_label = makeStaticText(self.settingsBook_pane1, "Start voltage (V)")
-        self.startVoltage_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                              validator=validator('floatPos'))
+        self.startVoltage_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
         info_msg = "Start voltage - starting value in the collision voltage ramp. Value type: Float. Range: 0-200"
         self.startVoltage_input.SetToolTip(wx.ToolTip(info_msg))
 
         endVoltage_label = makeStaticText(self.settingsBook_pane1, "End voltage (V)")
-        self.endVoltage_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                            validator=validator('floatPos'))
+        self.endVoltage_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
         info_msg = "End voltage - final value in the collision voltage ramp. Value type: Float. Range: 0-200"
         self.endVoltage_input.SetToolTip(wx.ToolTip(info_msg))
 
         stepVoltage_label = makeStaticText(self.settingsBook_pane1, "Step voltage (V)")
-        self.stepVoltage_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                             validator=validator('floatPos'))
+        self.stepVoltage_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
         info_msg = "Step voltage - size of increment between each step. Value type: Float."
         self.stepVoltage_input.SetToolTip(wx.ToolTip(info_msg))
 
         exponentialPerct_label = makeStaticText(self.settingsBook_pane1, "Exponential (%)")
-        self.exponentialPerct_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                                  validator=validator('floatPos'))
-        info_msg = "Exponential percentage value - determines at which stage of collision voltage ramp the increase" + \
-            " in SPV should start. Value type: Float. Range: 0-100"
+        self.exponentialPerct_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
+        info_msg = (
+            "Exponential percentage value - determines at which stage of collision voltage ramp the increase"
+            + " in SPV should start. Value type: Float. Range: 0-100"
+        )
         self.exponentialPerct_input.SetToolTip(wx.ToolTip(info_msg))
 
         exponentialIncrm_label = makeStaticText(self.settingsBook_pane1, "Exponential increment")
-        self.exponentialIncrm_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                                  validator=validator('floatPos'))
-        info_msg = "Exponential increment value - determines how rapidly the value of SPV increases." + \
-            " Value type: Float. Range: 0.01-0.075"
+        self.exponentialIncrm_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
+        info_msg = (
+            "Exponential increment value - determines how rapidly the value of SPV increases."
+            + " Value type: Float. Range: 0.01-0.075"
+        )
         self.exponentialIncrm_input.SetToolTip(wx.ToolTip(info_msg))
 
         boltzmann_label = makeStaticText(self.settingsBook_pane1, "Boltzmann offset")
-        self.boltzmann_input = wx.TextCtrl(self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1),
-                                           validator=validator('floatPos'))
-        info_msg = "Boltzmann offset value - determines how rapidly the value of SPV increases. Value type: Float." + \
-            " Range: 10-100"
+        self.boltzmann_input = wx.TextCtrl(
+            self.settingsBook_pane1, -1, "", size=(TXTBOX_SIZE, -1), validator=validator("floatPos")
+        )
+        info_msg = (
+            "Boltzmann offset value - determines how rapidly the value of SPV increases. Value type: Float."
+            + " Range: 10-100"
+        )
         self.boltzmann_input.SetToolTip(wx.ToolTip(info_msg))
 
         userDefined_label = makeStaticText(self.settingsBook_pane1, "User-defined")
         self.loadCSVBtn = wx.Button(self.settingsBook_pane1, -1, "Load list", size=(60, -1))
-        info_msg = "Load a .csv list SPVs and CVs. The file has to have a header with SPV and CV" + \
-            " labels and be comma-delimited."
+        info_msg = (
+            "Load a .csv list SPVs and CVs. The file has to have a header with SPV and CV"
+            + " labels and be comma-delimited."
+        )
         self.loadCSVBtn.SetToolTip(wx.ToolTip(info_msg))
 
         grid = wx.GridBagSizer(2, 2)
@@ -207,8 +243,7 @@ class panelControls (wx.Panel):
         return origamiMainSizer
 
     def make_buttons_box(self):
-        mainSizer = wx.StaticBoxSizer(wx.StaticBox(self.settingsBook_pane1, -1, "", size=(552, -1)),
-                                      wx.VERTICAL)
+        mainSizer = wx.StaticBoxSizer(wx.StaticBox(self.settingsBook_pane1, -1, "", size=(552, -1)), wx.VERTICAL)
 
         self.pathBtn = wx.Button(self.settingsBook_pane1, -1, "Set path", size=(80, -1))
         info_msg = "Set path to MassLynx folder where acquisition takes place"
@@ -219,8 +254,9 @@ class panelControls (wx.Panel):
         self.calculateBtn.SetToolTip(wx.ToolTip(info_msg))
 
         self.saveParametersBtn = wx.Button(self.settingsBook_pane1, -1, "Save parameters", size=(100, -1))
-        info_msg = "Save ORIGAMI-MS parameters so ORIGAMI-ANALYSE can automatically" + \
-            " read them when viewing MassLynx file"
+        info_msg = (
+            "Save ORIGAMI-MS parameters so ORIGAMI-ANALYSE can automatically" + " read them when viewing MassLynx file"
+        )
         self.saveParametersBtn.SetToolTip(wx.ToolTip(info_msg))
 
         self.goBtn = wx.Button(self.settingsBook_pane1, -1, "Go", size=(80, -1))
@@ -243,16 +279,20 @@ class panelControls (wx.Panel):
         grid.Add(self.stopBtn, (0, 5), flag=wx.ALIGN_CENTER | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND)
 
         grid.Add(path_label, (1, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL)
-        grid.Add(self.path_value, (1, 1), (1, 5),
-                 flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
+        grid.Add(
+            self.path_value,
+            (1, 1),
+            (1, 5),
+            flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.EXPAND,
+        )
 
         # make bindings
-        self.pathBtn.Bind(wx.EVT_BUTTON, self.presenter.onGetMassLynxPath)
-        self.calculateBtn.Bind(wx.EVT_BUTTON, self.presenter.onCalculateParameters)
-        self.goBtn.Bind(wx.EVT_BUTTON, self.presenter.onStartWREnSRun)
-        self.stopBtn.Bind(wx.EVT_BUTTON, self.presenter.onStopWREnSRun)
+        self.pathBtn.Bind(wx.EVT_BUTTON, self.presenter.on_get_masslynx_path)
+        self.calculateBtn.Bind(wx.EVT_BUTTON, self.presenter.on_calculate_parameters)
+        self.goBtn.Bind(wx.EVT_BUTTON, self.presenter.on_start_wrens_runner)
+        self.stopBtn.Bind(wx.EVT_BUTTON, self.presenter.on_stop_wrens_runner)
 
-        self.saveParametersBtn.Bind(wx.EVT_BUTTON, self.presenter.onExportParameters)
+        self.saveParametersBtn.Bind(wx.EVT_BUTTON, self.presenter.on_save_parameters)
 
         mainSizer.Add(grid, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
@@ -262,15 +302,15 @@ class panelControls (wx.Panel):
 
         polarityID = self.polarityBox.GetStringSelection()
         if polarityID == "Positive":
-            self.config.iPolarity = 'POSITIVE'
+            self.config.iPolarity = "POSITIVE"
         else:
-            self.config.iPolarity = 'NEGATIVE'
+            self.config.iPolarity = "NEGATIVE"
 
         activationID = self.activationZone.GetStringSelection()
         if activationID == "Cone":
-            self.config.iActivationZone = 'CONE'
+            self.config.iActivationZone = "CONE"
         else:
-            self.config.iActivationZone = 'TRAP'
+            self.config.iActivationZone = "TRAP"
 
         self.config.iActivationMode = self.activationType.GetStringSelection()
 
@@ -296,23 +336,23 @@ class panelControls (wx.Panel):
         self.exponentialIncrm_input.SetValue(str(self.config.iExponentIncre))
         self.boltzmann_input.SetValue(str(self.config.iBoltzmann))
 
-        if self.config.iPolarity == 'POSITIVE':
+        if self.config.iPolarity == "POSITIVE":
             self.polarityBox.SetSelection(0)
-        elif self.config.iPolarity == 'NEGATIVE':
+        elif self.config.iPolarity == "NEGATIVE":
             self.polarityBox.SetSelection(1)
 
-        if self.config.iActivationZone == 'Cone':
+        if self.config.iActivationZone == "Cone":
             self.activationZone.SetSelection(0)
-        elif self.config.iActivationZone == 'Trap':
+        elif self.config.iActivationZone == "Trap":
             self.activationZone.SetSelection(1)
 
-        if self.config.iActivationMode == 'Linear':
+        if self.config.iActivationMode == "Linear":
             self.activationType.SetSelection(0)
-        elif self.config.iActivationMode == 'Exponential':
+        elif self.config.iActivationMode == "Exponential":
             self.activationType.SetSelection(1)
-        elif self.config.iActivationMode == 'Boltzmann':
+        elif self.config.iActivationMode == "Boltzmann":
             self.activationType.SetSelection(2)
-        elif self.config.iActivationMode == 'User-defined':
+        elif self.config.iActivationMode == "User-defined":
             self.activationType.SetSelection(3)
 
         self.on_toggle_controls(evt=None)
@@ -325,27 +365,46 @@ class panelControls (wx.Panel):
         enableList, disableList = [], []
         self.config.iActivationMode = self.activationType.GetStringSelection()
         if self.config.iActivationMode == "Linear":
-            enableList = [self.spv_input, self.startVoltage_input, self.endVoltage_input,
-                          self.stepVoltage_input]
+            enableList = [self.spv_input, self.startVoltage_input, self.endVoltage_input, self.stepVoltage_input]
 
-            disableList = [self.exponentialIncrm_input, self.exponentialPerct_input, self.boltzmann_input,
-                           self.loadCSVBtn]
+            disableList = [
+                self.exponentialIncrm_input,
+                self.exponentialPerct_input,
+                self.boltzmann_input,
+                self.loadCSVBtn,
+            ]
         elif self.config.iActivationMode == "Exponential":
-            enableList = [self.spv_input, self.startVoltage_input, self.endVoltage_input,
-                          self.stepVoltage_input, self.exponentialIncrm_input, self.exponentialPerct_input]
+            enableList = [
+                self.spv_input,
+                self.startVoltage_input,
+                self.endVoltage_input,
+                self.stepVoltage_input,
+                self.exponentialIncrm_input,
+                self.exponentialPerct_input,
+            ]
 
             disableList = [self.boltzmann_input, self.loadCSVBtn]
         elif self.config.iActivationMode == "Boltzmann":
-            enableList = [self.spv_input, self.startVoltage_input, self.endVoltage_input,
-                          self.stepVoltage_input, self.boltzmann_input]
+            enableList = [
+                self.spv_input,
+                self.startVoltage_input,
+                self.endVoltage_input,
+                self.stepVoltage_input,
+                self.boltzmann_input,
+            ]
 
-            disableList = [self.exponentialIncrm_input, self.exponentialPerct_input,
-                           self.loadCSVBtn]
+            disableList = [self.exponentialIncrm_input, self.exponentialPerct_input, self.loadCSVBtn]
         elif self.config.iActivationMode == "User-defined":
             enableList = [self.loadCSVBtn]
-            disableList = [self.spv_input, self.startVoltage_input, self.endVoltage_input,
-                           self.stepVoltage_input, self.exponentialIncrm_input,
-                           self.exponentialPerct_input, self.boltzmann_input]
+            disableList = [
+                self.spv_input,
+                self.startVoltage_input,
+                self.endVoltage_input,
+                self.stepVoltage_input,
+                self.exponentialIncrm_input,
+                self.exponentialPerct_input,
+                self.boltzmann_input,
+            ]
 
         # Since whenever we change the activation zone, polarity or activation
         # type, the wrensCMD is going to be incorrect. It needs to be cleared-up

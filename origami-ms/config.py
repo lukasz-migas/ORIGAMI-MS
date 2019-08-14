@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
 #    This program is free software. Feel free to redistribute it and/or
 #    modify it under the condition you cite and credit the authors whenever
 #    appropriate.
@@ -10,14 +8,15 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
+import os.path
 
 import wx
-import os.path
+from utils.converters import str2int
+from utils.converters import str2num
 from wx.lib.embeddedimage import PyEmbeddedImage
-from utils.converters import str2int, str2num
 
 
-class config():
+class config:
     """
     Configuration file that shares data between modules
     """
@@ -25,12 +24,14 @@ class config():
     def __init__(self):
         self.cwd = None
         self.loggingFile_path = None
-        self.version = "1.0.2"
-        self.links = {'home': 'https://www.click2go.umip.com/i/s_w/ORIGAMI.html',
-                      'github': 'https://github.com/lukasz-migas/ORIGAMI-MS',
-                      'github_origami_analyse': 'https://github.com/lukasz-migas/ORIGAMI',
-                      'cite': 'https://doi.org/10.1016/j.ijms.2017.08.014',
-                      'newVersion': 'https://github.com/lukasz-migas/ORIGAMI-MS/releases'}
+        self.version = "1.1.0"
+        self.links = {
+            "home": "https://www.click2go.umip.com/i/s_w/ORIGAMI.html",
+            "github": "https://github.com/lukasz-migas/ORIGAMI-MS",
+            "github_origami_analyse": "https://github.com/lukasz-migas/ORIGAMI",
+            "cite": "https://doi.org/10.1016/j.ijms.2017.08.014",
+            "newVersion": "https://github.com/lukasz-migas/ORIGAMI-MS/releases",
+        }
 
         self.iPolarity = None
         self.iActivationZone = None
@@ -68,9 +69,9 @@ class config():
         Imports config from a file
         """
         if not os.path.isfile(fileName):
-            print('not a path')
+            print("not a path")
             return
-        f = open(fileName, 'r')
+        f = open(fileName, "r")
         for line in f:
             if len(line.split()) > 1:
                 if line.startswith("iPolarity "):
@@ -118,13 +119,13 @@ class config():
         Exports config to a file
         """
 
-        print((''.join(["Exporting configuration file ", fileName])))
-        f = open(fileName, 'w+')
-        f.write('General config scheme\n')
-        f.write('Property<space>Value\n')
-        f.write('Please DO NOT change the property names\n')
-        f.write('\n')
-        f.write('# === GENERAL SETTINGS === #\n')
+        print("".join(["Exporting configuration file ", fileName]))
+        f = open(fileName, "w+")
+        f.write("General config scheme\n")
+        f.write("Property<space>Value\n")
+        f.write("Please DO NOT change the property names\n")
+        f.write("\n")
+        f.write("# === GENERAL SETTINGS === #\n")
         f.write("iPolarity " + str(self.iPolarity) + "\n")
         f.write("iActivationZone " + str(self.iActivationZone) + "\n")
         f.write("iActivationMode " + str(self.iActivationMode) + "\n")
@@ -136,7 +137,7 @@ class config():
         f.write("iExponentPerct " + str(self.iExponentPerct) + "\n")
         f.write("iExponentIncre " + str(self.iExponentIncre) + "\n")
         f.write("iBoltzmann " + str(self.iBoltzmann) + "\n")
-        f.write('# === PATHS === #\n')
+        f.write("# === PATHS === #\n")
         f.write("wrensLinearName " + str(self.wrensLinearName) + "\n")
         f.write("wrensExponentName " + str(self.wrensExponentName) + "\n")
         f.write("wrensBoltzmannName " + str(self.wrensBoltzmannName) + "\n")
@@ -149,16 +150,18 @@ class config():
         Exports config to a file
         """
 
-        print((''.join(["Exporting ORIGAMI configuration file ", fileName])))
+        print("".join(["Exporting ORIGAMI configuration file ", fileName]))
 
-        f = open(fileName, 'w+')
+        f = open(fileName, "w+")
         # Global setting
         f.write("method " + str(self.iActivationMode) + "\n")
 
         # Linear/Exponential/Boltzmann methods only
-        if (self.iActivationMode == 'Linear' or
-            self.iActivationMode == 'Exponential' or
-                self.iActivationMode == 'Boltzmann'):
+        if (
+            self.iActivationMode == "Linear"
+            or self.iActivationMode == "Exponential"
+            or self.iActivationMode == "Boltzmann"
+        ):
             f.write("spv " + str(self.iSPV) + "\n")
             f.write("start " + str(self.iStartVoltage) + "\n")
             f.write("end " + str(self.iEndVoltage) + "\n")
@@ -170,7 +173,7 @@ class config():
             f.write("step " + "None" + "\n")
 
         # Exponential method only
-        if self.iActivationMode == 'Exponential':
+        if self.iActivationMode == "Exponential":
             f.write("expIncrement " + str(self.iExponentIncre) + "\n")
             f.write("expPercentage " + str(self.iExponentPerct) + "\n")
         else:
@@ -178,13 +181,13 @@ class config():
             f.write("expPercentage " + "None" + "\n")
 
         # Boltzman method only
-        if self.iActivationMode == 'Boltzmann':
+        if self.iActivationMode == "Boltzmann":
             f.write("dx " + str(self.iBoltzmann) + "\n")
         else:
             f.write("dx " + "None" + "\n")
 
         # User-specified method only
-        if self.iActivationMode == 'User-defined':
+        if self.iActivationMode == "User-defined":
             f.write("SPVsList " + str(self.SPVsList) + "\n")
             f.write("CVsList " + str(self.CVsList) + "\n")
         else:
@@ -198,7 +201,6 @@ class config():
 
 
 class IconContainer:
-
     def __init__(self):
 
         self.icons()
@@ -470,5 +472,6 @@ class IconContainer:
             "BKEKpFeCIAhVIL0SBEGoAumVIAhCFUivBEEQqkB6JQiCUAXSK0EQhCqQXgmCIFSB9EoQBKEK"
             "pFeCIAhVIL0SBEGoAumVIAhCFUivBEEQqkB6JQiCUAXSK0EQhCqQXgmCIFSB9EoQBKEKpFeC"
             "IAhVIL0SBEGoAumVIAhCFUivBEEQqkB6JQiCUAXSK0EQhCqQXgmCIFSB9EoQBKEKpFeCIAgV"
-            "SEj4/08YXTiH8v1hAAAAAElFTkSuQmCC")
+            "SEj4/08YXTiH8v1hAAAAAElFTkSuQmCC"
+        )
         self.getLogo = origamiLogo.GetBitmap()

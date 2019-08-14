@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
 #    This program is free software. Feel free to redistribute it and/or
 #    modify it under the condition you cite and credit the authors whenever
 #    appropriate.
@@ -10,23 +8,25 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
+from time import gmtime
+from time import strftime
 
-import wx
 import matplotlib
+import numpy as np
+import wx
 from plottingWindow import plottingWindow
-from time import gmtime, strftime
 
 
 class panelPlot(wx.Panel):
-
     def __init__(self, parent, config):
-        wx.Panel.__init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                          size=wx.Size(350, 600), style=wx.TAB_TRAVERSAL)
+        wx.Panel.__init__(
+            self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(350, 600), style=wx.TAB_TRAVERSAL
+        )
 
         self.parent = parent
         self.config = config
         self.currentPage = None
-        self.startTime = (strftime("%H-%M-%S_%d-%m-%Y", gmtime()))
+        self.startTime = strftime("%H-%M-%S_%d-%m-%Y", gmtime())
         self.config.startTime = self.startTime
 
         self.make_notebook()
@@ -34,12 +34,10 @@ class panelPlot(wx.Panel):
     def make_notebook(self):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         # Setup notebook
-        self.plotNotebook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition,
-                                        wx.DefaultSize, 0)
+        self.plotNotebook = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
 
         # Setup PLOT SPV
-        self.panelSPV = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                 wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.panelSPV = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelSPV, "Scans per Voltage", False)
 
         self.plot1 = plot1D(self.panelSPV)
@@ -47,8 +45,7 @@ class panelPlot(wx.Panel):
         box1.Add(self.plot1, 1, wx.EXPAND)
         self.panelSPV.SetSizer(box1)
 
-        self.panelTime = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                  wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.panelTime = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelTime, "Acquisition time", False)
 
         self.plot2 = plot1D(self.panelTime)
@@ -56,15 +53,21 @@ class panelPlot(wx.Panel):
         box2.Add(self.plot2, 1, wx.EXPAND)
         self.panelTime.SetSizer(box2)
 
+        self.panelCVs = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.plotNotebook.AddPage(self.panelCVs, "Collision Voltage steps", False)
+
+        self.plot3 = plot1D(self.panelTime)
+        box3 = wx.BoxSizer(wx.VERTICAL)
+        box3.Add(self.plot3, 1, wx.EXPAND)
+        self.panelCVs.SetSizer(box3)
+
         # Setup LOG
-        self.panelLog = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition,
-                                 wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.panelLog = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
 
         self.plotNotebook.AddPage(self.panelLog, "ORIGAMI Log", False)
 
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_WORDWRAP
-        self.log = wx.TextCtrl(self.panelLog, wx.ID_ANY, size=(-1, -1),
-                               style=style)
+        self.log = wx.TextCtrl(self.panelLog, wx.ID_ANY, size=(-1, -1), style=style)
         self.log.SetBackgroundColour(wx.BLACK)
         self.log.SetForegroundColour(wx.GREEN)
 
@@ -83,19 +86,17 @@ class panelPlot(wx.Panel):
 
     def save_log_data(self, evt):
         fileName = self.config.loggingFile_path
-        savefile = open(fileName, 'w')
+        savefile = open(fileName, "w")
         savefile.write(self.log.GetValue())
         savefile.close()
 
 
 class plot1D(plottingWindow):
-
     def __init__(self, *args, **kwargs):
         plottingWindow.__init__(self, *args, **kwargs)
         self.plotflag = False
 
-    def plot1Ddata(self, xvals, yvals, xlabel, ylabel, title, zoom="box",
-                   axesSize=None, fontsize=10):
+    def on_plot_1D(self, xvals, yvals, xlabel, ylabel, title, zoom="box", axesSize=None, fontsize=10):
 
         self.plotflag = True  # Used only if saving data
         self.zoomtype = zoom
@@ -105,17 +106,24 @@ class plot1D(plottingWindow):
             self._axes = axesSize
         self.xlabel = xlabel
         self.ylabel = ylabel
-        self.figure.set_facecolor('white')
-        self.figure.set_edgecolor('white')
-        self.canvas.SetBackgroundColour('white')
-        matplotlib.rc('xtick', labelsize=fontsize)
-        matplotlib.rc('ytick', labelsize=fontsize)
+        self.figure.set_facecolor("white")
+        self.figure.set_edgecolor("white")
+        self.canvas.SetBackgroundColour("white")
+        matplotlib.rc("xtick", labelsize=fontsize)
+        matplotlib.rc("ytick", labelsize=fontsize)
 
         self.plotSPV = self.figure.add_axes(self._axes)
-        self.plotSPV.plot(xvals, yvals, color='black')
+        self.plotSPV.plot(xvals, yvals, color="black")
 
-        self.plotSPV.set_xlim([min(xvals), max(xvals)])
-        self.plotSPV.set_ylim([min(yvals) - 1, max(yvals) + 1])
+        xlimits = (np.min(xvals) - 1, np.max(xvals) + 1)
+        ylimits = (np.min(yvals) * 0.9, np.max(yvals) * 1.1)
 
-        self.plotSPV.set_xlabel(self.xlabel, fontsize=fontsize, weight='normal')
-        self.plotSPV.set_ylabel(self.ylabel, fontsize=fontsize, weight='normal')
+        self.plotSPV.set_xlim(xlimits)
+        self.plotSPV.set_ylim(ylimits)
+
+        self.plotSPV.set_xlabel(self.xlabel, fontsize=fontsize, weight="normal")
+        self.plotSPV.set_ylabel(self.ylabel, fontsize=fontsize, weight="normal")
+
+        extent = [xlimits[0], ylimits[0], xlimits[1], ylimits[1]]
+
+        self.setup_zoom([self.plotSPV], self.zoomtype, data_lims=extent)

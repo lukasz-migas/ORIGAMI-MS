@@ -3,10 +3,10 @@ language: python
 cache:
   pip: true
   apt: true
-  
+
 python:
   - "3.6"
-  
+
 addons:
   apt:
     packages:

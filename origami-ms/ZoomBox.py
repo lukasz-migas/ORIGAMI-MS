@@ -1,15 +1,13 @@
+import numpy as np
+import wx
 from matplotlib.patches import Rectangle
 from pubsub import pub
 
-import numpy as np
-import wx
 
 # FIXME: This function doesn't quite work as it should.
 # If we left click and the right click it gets locked for some reason.
 # Check why is this happening!
 # TODO enable vertical line (i.e. scale low intensity ions!)
-
-
 def GetMaxes(axes, xmin=None, xmax=None):
     yvals = []
     xvals = []
@@ -144,7 +142,6 @@ def GetStart(axes):
 
 
 class GetXValues:
-
     def __init__(self, axes):
         """
         This function retrieves the x-axis info
@@ -161,13 +158,14 @@ class GetXValues:
         if self.canvas is not axes[0].figure.canvas:
             for cid in self.cids:
                 self.canvas.mpl_disconnect(cid)
-                print('disconnected')
+                print("disconnected")
             self.canvas = axes[0].figure.canvas
 
-#         print(self.canvas.axes.get_xlim())
+        #         print(self.canvas.axes.get_xlim())
 
         for axes in self.axes:
-            print((axes.get_xlim()))
+            print(axes.get_xlim())
+
 
 #         print('i am in')
 
@@ -207,16 +205,21 @@ class ZoomBox:
         show()
     """
 
-    def __init__(self, axes, onselect, drawtype='box',
-                 minspanx=None,
-                 minspany=None,
-                 useblit=False,
-                 lineprops=None,
-                 rectprops=None,
-                 onmove_callback=None,
-                 spancoords='data',
-                 button=None,
-                 data_lims=None):
+    def __init__(
+        self,
+        axes,
+        onselect,
+        drawtype="box",
+        minspanx=None,
+        minspany=None,
+        useblit=False,
+        lineprops=None,
+        rectprops=None,
+        onmove_callback=None,
+        spancoords="data",
+        button=None,
+        data_lims=None,
+    ):
         #                  integrate=0, smash=0):
         """
         Create a selector in axes.  When a selection is made, clear
@@ -273,15 +276,15 @@ class ZoomBox:
         self.minspanx = minspanx
         self.minspany = minspany
 
-#         self.integrate = integrate
-#         self.smash = smash
+        #         self.integrate = integrate
+        #         self.smash = smash
 
         if button is None or isinstance(button, list):
             self.validButtons = button
         elif isinstance(button, int):
             self.validButtons = [button]
 
-        assert (spancoords in ('data', 'pixels'))
+        assert spancoords in ("data", "pixels")
 
         self.spancoords = spancoords
         self.eventpress = None
@@ -306,26 +309,23 @@ class ZoomBox:
         for axes in self.axes:
             axes.set_xlim(xmin, xmax)
             axes.set_ylim(ymin, ymax)
-#             print self.data_lims
+
+    #             print self.data_lims
 
     def new_axes(self, axes, rectprops=None):
         self.axes = axes
         if self.canvas is not axes[0].figure.canvas:
             for cid in self.cids:
                 self.canvas.mpl_disconnect(cid)
-                print('disconnected')
+                print("disconnected")
             self.canvas = axes[0].figure.canvas
-#             self.cids.append(self.canvas.mpl_connect('motion_notify_event', self.OnMotion))
-            self.cids.append(self.canvas.mpl_connect('button_press_event', self.press))
-            self.cids.append(self.canvas.mpl_connect('button_release_event', self.release))
-            self.cids.append(self.canvas.mpl_connect('draw_event', self.update_background))
-            self.cids.append(self.canvas.mpl_connect('motion_notify_event', self.OnMotion))
+            self.cids.append(self.canvas.mpl_connect("button_press_event", self.press))
+            self.cids.append(self.canvas.mpl_connect("button_release_event", self.release))
+            self.cids.append(self.canvas.mpl_connect("draw_event", self.update_background))
+            self.cids.append(self.canvas.mpl_connect("motion_notify_event", self.OnMotion))
 
         if rectprops is None:
-            rectprops = dict(facecolor='white',
-                             edgecolor='black',
-                             alpha=0.5,
-                             fill=False)
+            rectprops = dict(facecolor="white", edgecolor="black", alpha=0.5, fill=False)
         self.rectprops = rectprops
 
         for axes in self.axes:
@@ -335,12 +335,12 @@ class ZoomBox:
             axes.add_patch(to_draw)
 
     def update_background(self, evt):
-        'force an update of the background'
+        "force an update of the background"
         if self.useblit:
             self.background = self.canvas.copy_from_bbox(self.canvas.figure.bbox)
 
     def ignore(self, evt):
-        'return True if event should be ignored'
+        "return True if event should be ignored"
         # If ZoomBox is not active :
         if not self.active:
             return True
@@ -362,38 +362,37 @@ class ZoomBox:
                     Yvalues = axes.get_ylim()
 
                     # Sends message to add data to table
-                    pub.sendMessage('add2table', xvalsMin=Xvalues[0], xvalsMax=Xvalues[1], yvalsMax=Yvalues[1])
-#                     pub.sendMessage('add2table', ((values)))
-#                         pub.sendMessage('add2table', values[0], )
+                    pub.sendMessage("add2table", xvalsMin=Xvalues[0], xvalsMax=Xvalues[1], yvalsMax=Yvalues[1])
+                    #                     pub.sendMessage('add2table', ((values)))
+                    #                         pub.sendMessage('add2table', values[0], )
                     return True
                 else:
                     return False
 
-#         # Only do selection if event was triggered with a desired button
-#         if self.validButtons is not None:
-#             if not evt.button in self.validButtons:
-#                 if evt.button == 3 and self.integrate == 1:
-#                     # print "rightclick"
-#                     pub.sendMessage('integrate')
-#                 elif evt.button == 3 and self.smash == 1:
-#                     if evt.dblclick:
-#                         pub.sendMessage('smash')
-#                     else:
-#                         pub.sendMessage('mzlimits')
-#                 elif evt.button == 2:
-#                     pub.sendMessage('middle_click')
-#                 return True
+        #         # Only do selection if event was triggered with a desired button
+        #         if self.validButtons is not None:
+        #             if not evt.button in self.validButtons:
+        #                 if evt.button == 3 and self.integrate == 1:
+        #                     # print "rightclick"
+        #                     pub.sendMessage('integrate')
+        #                 elif evt.button == 3 and self.smash == 1:
+        #                     if evt.dblclick:
+        #                         pub.sendMessage('smash')
+        #                     else:
+        #                         pub.sendMessage('mzlimits')
+        #                 elif evt.button == 2:
+        #                     pub.sendMessage('middle_click')
+        #                 return True
 
         # If no button pressed yet or if it was out of the axes, ignore
         if self.eventpress is None:
             return evt.inaxes not in self.axes
 
         # If a button pressed, check if the release-button is the same
-        return (evt.inaxes not in self.axes or
-                evt.button != self.eventpress.button)
+        return evt.inaxes not in self.axes or evt.button != self.eventpress.button
 
     def press(self, evt):
-        'on button press event'
+        "on button press event"
         # Is the correct button pressed within the correct axes?
         if self.ignore(evt):
             return
@@ -408,7 +407,7 @@ class ZoomBox:
         return False
 
     def release(self, evt):
-        'on button release event'
+        "on button release event"
         if self.eventpress is None or (self.ignore(evt) and not self.buttonDown):
             return
         self.buttonDown = False
@@ -423,7 +422,7 @@ class ZoomBox:
             if wx.GetKeyState(wx.WXK_CONTROL):
                 # Ignore the resize if the control key is down
                 if evt.button == 1:  # and self.smash == 1:
-                    pub.sendMessage('left_click', xpos=evt.xdata, ypos=evt.ydata)
+                    pub.sendMessage("left_click", xpos=evt.xdata, ypos=evt.ydata)
                 return
             # x0,y0,x1,y1=GetMaxes(evt.inaxes)
             # print GetMaxes(evt.inaxes)
@@ -447,7 +446,7 @@ class ZoomBox:
             # Register a click if zoomout was not necessary
             if not zoomout:
                 if evt.button == 1:  # and self.smash == 1:
-                    pub.sendMessage('left_click', xpos=evt.xdata, ypos=evt.ydata)
+                    pub.sendMessage("left_click", xpos=evt.xdata, ypos=evt.ydata)
 
             for axes in self.axes:
                 axes.set_xlim(xmin, xmax)
@@ -461,12 +460,12 @@ class ZoomBox:
         # release coordinates, button, ...
         self.eventrelease = evt
 
-        if self.spancoords == 'data':
+        if self.spancoords == "data":
             xmin, ymin = self.eventpress.xdata, self.eventpress.ydata
             # xmax, ymax = self.eventrelease.xdata, self.eventrelease.ydata
             # fix for if drag outside axes boundaries
             xmax, ymax = self.eventrelease.xdata or self.prev[0], self.eventrelease.ydata or self.prev[1]
-        elif self.spancoords == 'pixels':
+        elif self.spancoords == "pixels":
             xmin, ymin = self.eventpress.x, self.eventpress.y
             xmax, ymax = self.eventrelease.x, self.eventrelease.y
         else:
@@ -504,13 +503,13 @@ class ZoomBox:
             """Box too small"""  # check if drawed distance (if it exists) is
             return  # not to small in neither x nor y-direction
 
-#         if wx.GetKeyState(wx.WXK_CONTROL):
-#             # TODO: Send this signal up and drop it in a main GUI
-#             # if the ctrl key is down, print out the difference and a guess for the Nanodisc mass assuming POPC
-#             lmass = 760.076
-#             charge = lmass / spanx
-#             print spanx, charge, charge * xmax
-#             return
+        #         if wx.GetKeyState(wx.WXK_CONTROL):
+        #             # TODO: Send this signal up and drop it in a main GUI
+        #             # if the ctrl key is down, print out the difference and a guess for the Nanodisc mass assuming POPC
+        #             lmass = 760.076
+        #             charge = lmass / spanx
+        #             print spanx, charge, charge * xmax
+        #             return
 
         for axes in self.axes:
             axes.set_xlim((xmin, xmax))
@@ -546,7 +545,7 @@ class ZoomBox:
         return False
 
     def update(self):
-        'draw using newfangled blit or oldfangled draw depending on useblit'
+        "draw using newfangled blit or oldfangled draw depending on useblit"
         if self.useblit:
             if self.background is not None:
                 self.canvas.restore_region(self.background)
@@ -559,7 +558,7 @@ class ZoomBox:
 
     def OnMotion(self, evt):
         #         pub.sendMessage('newxy', xpos=evt.xdata, ypos=evt.ydata)
-        'on motion notify event if box/line is wanted'
+        "on motion notify event if box/line is wanted"
         if self.eventpress is None or self.ignore(evt):
             return
         x, y = evt.xdata, evt.ydata  # actual position (with
@@ -569,9 +568,9 @@ class ZoomBox:
 
         minx, maxx = self.eventpress.xdata, x  # click-x and actual mouse-x
         miny, maxy = self.eventpress.ydata, y  # click-y and actual mouse-y
-        if minx > maxx:
-            minx, maxx = maxx, minx  # get them in the right order
-        if miny > maxy:
+        if minx is not None and maxx is not None and minx > maxx:
+            minx, maxx = maxx, minx
+        if miny is not None and maxy is not None and miny > maxy:
             miny, maxy = maxy, miny
 
         # Checks whether values are not empty (or are float)
@@ -595,12 +594,12 @@ class ZoomBox:
             miny = avg
             maxy = avg
             for to_draw in self.to_draw:
-                to_draw.set_edgecolor('m')
+                to_draw.set_edgecolor("m")
                 to_draw.set_linewidth(2.5)
                 to_draw.set_alpha(0.9)
         else:
             for to_draw in self.to_draw:
-                to_draw.set_edgecolor('k')
+                to_draw.set_edgecolor("k")
                 to_draw.set_alpha(0.2)
         for to_draw in self.to_draw:
             to_draw.set_x(minx)  # set lower left of box

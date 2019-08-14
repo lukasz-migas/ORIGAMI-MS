@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # -------------------------------------------------------------------------
 #    Copyright (C) 2017 Lukasz G. Migas <lukasz.migas@manchester.ac.uk>
-
 #    This program is free software. Feel free to redistribute it and/or
 #    modify it under the condition you cite and credit the authors whenever
 #    appropriate.
@@ -10,7 +8,6 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
-
 # Load libraries
 import wx
 
@@ -38,10 +35,8 @@ def dlgBox(exceptionTitle="", exceptionMsg="", type="Error"):
         return result
 
 
-def dlgAsk(message='', defaultValue=''):
-    dlg = wx.TextEntryDialog(None,  # parent
-                             message,
-                             defaultValue=defaultValue)
+def dlgAsk(message="", defaultValue=""):
+    dlg = wx.TextEntryDialog(None, message, defaultValue=defaultValue)  # parent
     dlg.ShowModal()
     result = dlg.GetValue()
     dlg.Destroy()
