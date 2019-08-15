@@ -14,7 +14,7 @@ import webbrowser
 from subprocess import Popen
 from time import gmtime
 from time import strftime
-
+import logging
 import config as config
 import dialogs
 import mainWindow as mainWindow
@@ -25,6 +25,11 @@ from IDs import ID_helpGitHub
 from IDs import ID_helpHomepage
 from IDs import ID_helpNewVersion
 
+logger = logging.getLogger("origami")
+
+# disable MPL logger
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
+
 
 class ORIGAMIMS(object):
     def __init__(self, *args, **kwargs):
@@ -32,23 +37,26 @@ class ORIGAMIMS(object):
         self.__wx_app = wx.App(redirect=False)
         self.run = None
         self.view = None
-        self.init(*args, **kwargs)
+        self.initilize(*args, **kwargs)
 
     def start(self):
+        """Start app"""
         self.view.Show()
         self.__wx_app.MainLoop()
 
     def quit(self):
+        """Quit app"""
         self.__wx_app.ProcessIdle()
         self.__wx_app.ExitMainLoop()
         self.view.Destroy()
         return True
 
     def endSession(self):
+        """Close session"""
         wx.CallAfter(self.quit, force=True)
 
-    def init(self, *args, **kwargs):
-
+    def initilize(self, *args, **kwargs):
+        """Initilize app"""
         self.config = config.config()
         self.icons = config.IconContainer()
 
@@ -60,7 +68,7 @@ class ORIGAMIMS(object):
         self.wrensInput = {"polarity": None, "activationZone": None, "method": None, "command": None}
         # Set current working directory
         self.config.cwd = os.getcwd()
-        self.logging = True
+        self.logging = False
 
         self.config.startTime = strftime("%H-%M-%S_%d-%m-%Y", gmtime())
         self.__wx_app.SetTopWindow(self.view)
@@ -75,13 +83,13 @@ class ORIGAMIMS(object):
             sys.stderr = self.view.panelPlots.log
 
         self.on_import_config_on_start(evt=None)
-
         self.data_handling = data_handling(self, self.view, self.config)
 
         # setup after startup
         self.view.panelControls._setup_after_startup()
 
     def check_log_path(self):
+        """Check log path exists"""
         log_directory = os.path.join(self.config.cwd, "logs")
         if not os.path.exists(log_directory):
             print("Directory logs did not exist - created a new one in {}".format(log_directory))
@@ -103,11 +111,11 @@ class ORIGAMIMS(object):
         # open webpage
         try:
             webbrowser.open(link, autoraise=1)
-        except BaseException:
-            pass
+        except Exception:
+            logger.error("Failed to execute action")
 
     def on_start_wrens_runner(self, evt):
-
+        """Start WREnS runner"""
         if self.wrensCMD is None:
             msg = "Are you sure you filled in correct details or pressed calculate?"
             dialogs.dlgBox(
@@ -150,6 +158,7 @@ class ORIGAMIMS(object):
         self.wrensRun = Popen(self.wrensCMD)
 
     def on_stop_wrens_runner(self, evt):
+        """Stop WREnS script"""
 
         if self.wrensRun:
             print("Stopped acquisition and reset the property banks")
@@ -160,15 +169,11 @@ class ORIGAMIMS(object):
             print("You have to start acquisition first!")
 
     def on_fill_in_default_values(self, evt=None):
-        """
-        This function fills in default values in case you are being lazy!
-        """
-        pass
+        """Fill-in default values"""
+        logger.error("Method not implemented yet")
 
     def on_get_masslynx_path(self, evt):
-        """
-        Select path to the MassLynx folder
-        """
+        """Select path to the MassLynx folder"""
 
         dlg = wx.DirDialog(self.view, "Select output directory...", style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
@@ -177,9 +182,7 @@ class ORIGAMIMS(object):
             self.currentPath = dlg.GetPath()
 
     def on_import_config(self, evt):
-        """
-        This function imports configuration file
-        """
+        """Imports configuration file"""
         dlg = wx.FileDialog(
             self.view, "Open Configuration File", wildcard="*.ini", style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR
         )
@@ -194,6 +197,7 @@ class ORIGAMIMS(object):
             print("".join(["Reset path: ", self.config.wrensResetPath]))
 
     def on_import_config_on_start(self, evt):
+        """Import configuration file on start-up of the application"""
         print("Importing origamiConfig.ini")
         self.config.importConfig(fileName="origamiConfig.ini", e=None)
 
