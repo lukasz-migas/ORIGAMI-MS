@@ -8,13 +8,14 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
+import logging
 import os
 import sys
 import webbrowser
 from subprocess import Popen
 from time import gmtime
 from time import strftime
-import logging
+
 import config as config
 import dialogs
 import mainWindow as mainWindow
