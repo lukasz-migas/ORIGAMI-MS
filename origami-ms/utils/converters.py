@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ["byte2str", "str2num", "num2str", "str2int", "float2int", "str2bool"]
+__all__ = ["str2num", "num2str", "str2int", "float2int", "str2bool"]
 
 
 def str2num(string):

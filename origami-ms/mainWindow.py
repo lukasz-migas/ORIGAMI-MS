@@ -20,7 +20,6 @@ from origamiStyles import makeMenuItem
 from panelAbout import panelAbout
 from panelControls import panelControls
 from panelPlot import panelPlot
-from pubsub import pub
 
 
 class MyFrame(wx.Frame):
@@ -104,7 +103,7 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.presenter.on_get_masslynx_path, id=ID_setMassLynxPath)
         self.Bind(wx.EVT_MENU, self.presenter.on_import_config, id=ID_on_import_config)
-        self.Bind(wx.EVT_MENU, self.presenter.onExportConfig, id=ID_exportConfigFile)
+        self.Bind(wx.EVT_MENU, self.presenter.on_export_config, id=ID_exportConfigFile)
 
         self.Bind(wx.EVT_MENU, self.on_open_about, id=ID_SHOW_ABOUT)
         self.Bind(wx.EVT_MENU, self.presenter.on_open_link, id=ID_helpCite)
@@ -120,14 +119,3 @@ class MyFrame(wx.Frame):
     def make_statusbar(self):
         self.mainStatusbar = self.CreateStatusBar(3, wx.STB_SIZEGRIP, wx.ID_ANY)
         self.mainStatusbar.SetStatusWidths([120, 50, -1])
-
-    def OnMotion(self, xpos, ypos):
-        """
-        Triggered by pubsub from plot windows. Reports text in Status Bar.
-        :param xpos: x position fed from event
-        :param ypos: y position fed from event
-        :return: None
-        """
-        if xpos is not None and ypos is not None:
-            self.SetStatusText("X={:.2f} Y={:.2f}".format(xpos, ypos), number=0)
-        pass

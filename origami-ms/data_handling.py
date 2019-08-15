@@ -1,212 +1,223 @@
 import dialogs
-from exception import MessageError
 import numpy as np
+from exception import MessageError
 
 
 class data_handling:
-
-    def __init__(self, presenter, view, config,):
+    def __init__(self, presenter, view, config):
 
         self.presenter = presenter
         self.view = view
         self.config = config
 
-    def onCheckParameters(self):
+    def on_check_parameters(self):
         """This function checks that all variables are in correct format"""
 
         if not isinstance(self.config.iSPV, int):
-            raise MessageError("Incorrect input",
-                               "SPV value should be an integer!"
-                               )
+            raise MessageError("Incorrect input", "SPV value should be an integer!")
 
         if not isinstance(self.config.iScanTime, (int, float)):
-            raise MessageError("Incorrect input",
-                               "Scan time value should be an integer or float!"
-                               )
+            raise MessageError("Incorrect input", "Scan time value should be an integer or float!")
 
         if not isinstance(self.config.iStartVoltage, (int, float)):
-            raise MessageError("Incorrect input",
-                               "Start voltage should be an integer or float!"
-                               )
+            raise MessageError("Incorrect input", "Start voltage should be an integer or float!")
 
         if not isinstance(self.config.iEndVoltage, (int, float)):
-            raise MessageError("Incorrect input",
-                               "End voltage should be an integer or float!"
-                               )
+            raise MessageError("Incorrect input", "End voltage should be an integer or float!")
 
         if not isinstance(self.config.iStepVoltage, (int, float)):
-            raise MessageError("Incorrect input",
-                               "Step voltage should be an integer or float!"
-                               )
+            raise MessageError("Incorrect input", "Step voltage should be an integer or float!")
 
         if self.config.iActivationMode == "Exponential":
             if not isinstance(self.config.iExponentPerct, (int, float)):
-                raise MessageError("Incorrect input",
-                                   "Exponential % value should be an integer or float!"
-                                   )
+                raise MessageError("Incorrect input", "Exponential % value should be an integer or float!")
 
             if not isinstance(self.config.iExponentIncre, (int, float)):
-                raise MessageError("Incorrect input",
-                                   "Exponential increment value should be an float!"
-                                   )
+                raise MessageError("Incorrect input", "Exponential increment value should be an float!")
 
         elif self.config.iActivationMode == "Boltzmann":
             if not isinstance(self.config.iBoltzmann, (int, float)):
-                raise MessageError("Incorrect input",
-                                   "Boltzmann offset value should be an integer or float!"
-                                   )
+                raise MessageError("Incorrect input", "Boltzmann offset value should be an integer or float!")
 
         if abs(self.config.iEndVoltage) <= abs(self.config.iStartVoltage):
-            raise MessageError("Incorrect input",
-                               "End voltage has to be larger than starting voltage"
-                               )
+            raise MessageError("Incorrect input", "End voltage has to be larger than starting voltage")
 
         if abs(self.config.iEndVoltage) > 200:
             msg = "The highest possible voltage is 200 V. Set to default: 200"
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             self.config.iEndVoltage = 200
-            self.view.panelControls.endVoltage_input.SetValue(
-                str(self.config.iEndVoltage)
-            )
+            self.view.panelControls.endVoltage_input.SetValue(str(self.config.iEndVoltage))
 
         if abs(self.config.iStartVoltage) < 0:
             msg = "The lowest possible voltage is 0 V. Set to default: 0"
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             self.config.iStartVoltage = 0
-            self.view.panelControls.startVoltage_input.SetValue(
-                str(self.config.iStartVoltage)
-            )
+            self.view.panelControls.startVoltage_input.SetValue(str(self.config.iStartVoltage))
 
         if self.config.iSPV <= 0:
             msg = "SPV must be larger than 0! Set to default: 3"
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             self.config.iSPV = 3
             self.view.panelControls.spv_input.SetValue(str(self.config.iSPV))
 
         if self.config.iScanTime <= 0:
             msg = "Scan time must be larger than 0! Set to default: 5"
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             self.config.iScanTime = 5
-            self.view.panelControls.scanTime_input.SetValue(
-                str(self.config.iScanTime))
+            self.view.panelControls.scanTime_input.SetValue(str(self.config.iScanTime))
 
         if self.config.iActivationMode == "Exponential":
             if self.config.iExponentPerct < 0:
                 msg = "Exponential % must be larger or equal to 0! Set to default: 0"
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iExponentPerct = 0
             elif self.config.iExponentPerct >= 100:
                 msg = "Exponential % must be smaller than 100! Set to default: 0"
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iExponentPerct = 0
-            self.view.panelControls.exponentialPerct_input.SetValue(
-                str(self.config.iExponentPerct)
-            )
+            self.view.panelControls.exponentialPerct_input.SetValue(str(self.config.iExponentPerct))
 
             if self.config.iExponentIncre <= 0:
-                msg = (
-                    "Exponential increment must be larger than 0! Set to default: 0.01"
-                )
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                msg = "Exponential increment must be larger than 0! Set to default: 0.01"
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iExponentIncre = 0.01
             elif self.config.iExponentIncre > 0.075:
                 msg = "Exponential increment must be smaller than 0.075! Set to default: 0.075"
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iExponentIncre = 0.075
-            self.view.panelControls.exponentialIncrm_input.SetValue(
-                str(self.config.iExponentIncre)
-            )
+            self.view.panelControls.exponentialIncrm_input.SetValue(str(self.config.iExponentIncre))
         elif self.config.iActivationMode == "Boltzmann":
             if self.config.iBoltzmann < 10:
                 msg = "Boltzmann offset must be larger than 10! Set to default: 10"
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iBoltzmann = 10
             elif self.config.iBoltzmann >= 100:
                 msg = "Boltzmann offset must be smaller than 100! Set to default: 25"
-                dialogs.dlgBox(
-                    exceptionTitle="Mistake in the input",
-                    exceptionMsg=msg,
-                    type="Error",
-                )
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
                 self.config.iBoltzmann = 25
-            self.view.panelControls.boltzmann_input.SetValue(
-                str(self.config.iBoltzmann)
-            )
+            self.view.panelControls.boltzmann_input.SetValue(str(self.config.iBoltzmann))
 
         # All good
         return True
+
+    def on_calculate_parameters(self, evt):
+        """
+        This function is to be used to setup path to save origami parameters
+        """
+
+        if not self.config.iActivationMode == "User-defined":
+            if self.on_check_parameters() is False:
+                print("Please fill in all necessary fields first!")
+                return
+            divisibleCheck = abs(self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage
+            divisibleCheck2 = divisibleCheck % 1
+            if divisibleCheck2 != 0:
+                msg = "Are you sure your collision voltage range is divisible by your increment?"
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+                return
+        else:
+            if self.config.iScanTime is None or self.config.iScanTime == "":
+                msg = "Please make sure you to fill in the scan time input box."
+                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+                return
+
+        if self.config.iActivationMode == "Linear":
+            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+                self.on_calculate_linear_method()
+            )
+        elif self.config.iActivationMode == "Exponential":
+            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+                self.on_calculate_exponential_method()
+            )
+        elif self.config.iActivationMode == "Boltzmann":
+            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+                self.on_calculate_boltzmann_method()
+            )
+        elif self.config.iActivationMode == "User-defined":
+            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+                self.on_calculate_user_list_method()
+            )
+
+        # calculate scans / voltages
+        scans, voltages = self.generate_extraction_windows(start_end_cv_list)
+
+        # Setup status:
+        self.view.SetStatusText(f"Acq. time: {totalAcqTime:.2f} mins", number=0)
+        self.view.SetStatusText(f"{len(scanPerVoltageList):d} steps", number=1)
+
+        # Add wrensCMD to config file
+        self.config.wrensCMD = self.wrensInput.get("command", None)
+
+        self.view.panelPlots.on_plot_spv(ColEnergyX, scanPerVoltageList)
+        self.view.panelPlots.on_plot_time(ColEnergyX, timeList)
+        self.view.panelPlots.on_plot_collision_voltages(scans, voltages)
+        print(f"Your submission code: {self.config.wrensCMD}")
 
     def check_acquisition_time(self, acq_time):
         # hard error
         if acq_time > 600:
             raise MessageError(
                 "Very long acquisition",
-                f"The acquisition will take more than 10 hours ({acq_time / 60:.2f}). Consider reducing " +
-                "your collision voltage range or adjusting the parameters!"
-                               )
+                f"The acquisition will take more than 10 hours ({acq_time / 60:.2f}). Consider reducing "
+                + "your collision voltage range or adjusting the parameters!",
+            )
         # soft warning
         if acq_time > 300:
             msg = (
                 "The acquisition will take more than 5 hours. Consider reducing "
                 "your collision voltage range or adjusting the parameters!"
             )
-            dialogs.dlgBox(
-                exceptionTitle="Very long acquisition warning",
-                exceptionMsg=msg,
-                type="Warning",
-            )
+            dialogs.dlgBox(exceptionTitle="Very long acquisition warning", exceptionMsg=msg, type="Warning")
 
-    def onPrepareLinearMethod(self):
+    def check_polarity(self):
+        """Get polarity"""
+        polarity = "-VE"
+        if self.config.iPolarity == "POSITIVE":
+            polarity = "+VE"
+
+        return polarity
+
+    def generate_extraction_windows(self, start_end_cv_list):
+        start_end_cv_list = np.asarray(start_end_cv_list)
+
+        start_scan = start_end_cv_list[:, 0]
+        end_scan = start_end_cv_list[:, 1]
+        cv_list = start_end_cv_list[:, 2]
+
+        scans, voltages = [], []
+        for i, cv in enumerate(cv_list):
+            scans.append(start_scan[i])
+            scans.append(end_scan[i])
+
+            voltages.append(cv)
+            voltages.append(cv)
+
+        return scans, voltages
+
+    def on_calculate_linear_method(self):
+        """Calculate parameters for linear method"""
 
         startScansPerVoltage = self.config.iSPV
         spv_list, time_list = [], []
-        approx_start_time = 3
+        start_time, approx_start_time = 3, 3
 
         # calculate number of steps
         n_voltages = int((self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage + 1)
         cv_list = np.linspace(self.config.iStartVoltage, self.config.iEndVoltage, n_voltages)
-        for __ in range(n_voltages):
+
+        # simulate generating cv vs scan
+        x1 = 0
+        start_end_cv_list = []
+        for _, cv in enumerate(cv_list):
+            x2 = int(x1 + startScansPerVoltage)
+            start_end_cv_list.append([x1 + start_time, x2 + start_time, cv])
             spv_list.append(startScansPerVoltage)
             approx_start_time = approx_start_time + startScansPerVoltage
             time_list.append(approx_start_time * self.config.iScanTime)
-
-        print(time_list)
+            x1 = x2
 
         n_cv_scans = n_voltages * self.config.iSPV
-        total_acq_time = round(
-            float((6 + n_cv_scans + self.config.iSPV)
-                  * self.config.iScanTime)
-            / 60,
-            2,
-        )
+        total_acq_time = round(float((6 + n_cv_scans + self.config.iSPV) * self.config.iScanTime) / 60, 2)
         self.check_acquisition_time(total_acq_time)
 
         wrens_cmd = "".join(
@@ -235,10 +246,8 @@ class data_handling:
             "method": self.config.iActivationMode,
             "command": wrens_cmd,
         }
-        if self.config.iPolarity == "POSITIVE":
-            polarity = "+VE"
-        else:
-            polarity = "-VE"
+
+        polarity = self.check_polarity()
         self.view.SetStatusText(
             "".join(
                 [
@@ -253,42 +262,39 @@ class data_handling:
             ),
             number=2,
         )
-        return wrens_input, cv_list, spv_list, time_list, total_acq_time
+        return wrens_input, cv_list, spv_list, time_list, total_acq_time, start_end_cv_list
 
-    def onPrepareExponentialMethod(self):
+    def on_calculate_exponential_method(self):
+        """Calculate parameters for exponential method"""
+
         startScansPerVoltage = self.config.iSPV
-        spv_list, time_list = [], []
+        scans_per_voltage_list, time_list = [], []
         timeFit = 3
+        start_scan = 3
         expAccumulator = 0
 
-        n_voltages = (
-            self.config.iEndVoltage - self.config.iStartVoltage
-        ) / self.config.iStepVoltage + 1
-        cv_list = np.linspace(
-            self.config.iStartVoltage, self.config.iEndVoltage, n_voltages
-        )
+        n_voltages = (self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage + 1
+        cv_list = np.linspace(self.config.iStartVoltage, self.config.iEndVoltage, n_voltages)
         for i in range(int(n_voltages)):
-            if abs(cv_list[i]) >= abs(
-                self.config.iEndVoltage * self.config.iExponentPerct / 100
-            ):
+            if abs(cv_list[i]) >= abs(self.config.iEndVoltage * self.config.iExponentPerct / 100):
                 expAccumulator = expAccumulator + self.config.iExponentIncre
-                scanPerVoltageFit = np.round(
-                    startScansPerVoltage * np.exp(expAccumulator), 0
-                )
+                scans_per_voltage_fit = np.round(startScansPerVoltage * np.exp(expAccumulator), 0)
             else:
-                scanPerVoltageFit = startScansPerVoltage
+                scans_per_voltage_fit = startScansPerVoltage
 
-            spv_list.append(scanPerVoltageFit)
-            timeFit = timeFit + scanPerVoltageFit
+            scans_per_voltage_list.append(scans_per_voltage_fit)
+            timeFit = timeFit + scans_per_voltage_fit
             time_list.append(timeFit * self.config.iScanTime)
 
-        n_cv_scans = sum(spv_list)
-        total_acq_time = round(
-            float((6 + n_cv_scans + self.config.iSPV)
-                  * self.config.iScanTime)
-            / 60,
-            2,
-        )
+        x1 = 0
+        start_end_cv_list = []
+        for i, cv in zip(scans_per_voltage_list, cv_list):
+            x2 = int(x1 + i)
+            start_end_cv_list.append([x1 + start_scan, x2 + start_scan, cv])
+            x1 = x2  # set new starting index
+
+        n_cv_scans = sum(scans_per_voltage_list)
+        total_acq_time = round(float((6 + n_cv_scans + self.config.iSPV) * self.config.iScanTime) / 60, 2)
         self.check_acquisition_time(total_acq_time)
 
         wrens_cmd = "".join(
@@ -322,10 +328,8 @@ class data_handling:
             "method": self.config.iActivationMode,
             "command": wrens_cmd,
         }
-        if self.config.iPolarity == "POSITIVE":
-            polarity = "+VE"
-        else:
-            polarity = "-VE"
+
+        polarity = self.check_polarity()
         self.view.SetStatusText(
             "".join(
                 [
@@ -340,36 +344,37 @@ class data_handling:
             ),
             number=2,
         )
-        return wrens_input, cv_list, spv_list, time_list, total_acq_time
+        return wrens_input, cv_list, scans_per_voltage_list, time_list, total_acq_time, start_end_cv_list
 
-    def onPrepareBoltzmannMethod(self):
+    def on_calculate_boltzmann_method(self):
         startScansPerVoltage = self.config.iSPV
-        spv_list, time_list = [], []
+        scans_per_voltage_list, time_list = [], []
+        start_scan = 3
         timeFit = 3
         A1 = 2
         A2 = 0.07
         x0 = 47
 
-        n_voltages = int(
-            (self.config.iEndVoltage - self.config.iStartVoltage)
-            / self.config.iStepVoltage
-            +1
-        )
-        cv_list = np.linspace(
-            self.config.iStartVoltage, self.config.iEndVoltage, n_voltages
-        )
+        n_voltages = int((self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage + 1)
+        cv_list = np.linspace(self.config.iStartVoltage, self.config.iEndVoltage, n_voltages)
+
         for i in range(int(n_voltages)):
-            scanPerVoltageFit = np.round(1 / (A2 + (A1 - A2) / (1 + np.exp((cv_list[i] - x0) / self.config.iBoltzmann))), 0,)
-            spv_list.append(scanPerVoltageFit * startScansPerVoltage)
-            timeFit = timeFit + scanPerVoltageFit
+            scans_per_voltage_fit = np.round(
+                1 / (A2 + (A1 - A2) / (1 + np.exp((cv_list[i] - x0) / self.config.iBoltzmann))), 0
+            )
+            scans_per_voltage_list.append(scans_per_voltage_fit * startScansPerVoltage)
+            timeFit = timeFit + scans_per_voltage_fit
             time_list.append(timeFit * self.config.iScanTime)
 
-        n_cv_scans = sum(spv_list)
-        total_acq_time = round(float((6 + n_cv_scans + self.config.iSPV)
-                  * self.config.iScanTime)
-            / 60,
-            2,
-        )
+        x1 = 0
+        start_end_cv_list = []
+        for i, cv in zip(scans_per_voltage_list, cv_list):
+            x2 = int(x1 + i)
+            start_end_cv_list.append([x1 + start_scan, x2 + start_scan, cv])
+            x1 = x2
+
+        n_cv_scans = sum(scans_per_voltage_list)
+        total_acq_time = round(float((6 + n_cv_scans + self.config.iSPV) * self.config.iScanTime) / 60, 2)
         self.check_acquisition_time(total_acq_time)
 
         wrens_cmd = "".join(
@@ -401,10 +406,7 @@ class data_handling:
             "method": self.config.iActivationMode,
             "command": wrens_cmd,
         }
-        if self.config.iPolarity == "POSITIVE":
-            polarity = "+VE"
-        else:
-            polarity = "-VE"
+        polarity = self.check_polarity()
         self.view.SetStatusText(
             "".join(
                 [
@@ -419,64 +421,58 @@ class data_handling:
             ),
             number=2,
         )
-        return wrens_input, cv_list, spv_list, time_list, total_acq_time
+        return wrens_input, cv_list, scans_per_voltage_list, time_list, total_acq_time, start_end_cv_list
 
-    def onPrepareListMethod(self):
+    def on_calculate_user_list_method(self):
 
         if self.config.CSVFilePath is None:
             msg = "Please load a CSV file first."
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
         if self.config.iScanTime is None or self.config.iScanTime == "":
-            msg = (
-                "Please fill in appropriate fields. The scan time is empty or incorrect"
-            )
-            dialogs.dlgBox(
-                exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error"
-            )
+            msg = "Please fill in appropriate fields. The scan time is empty or incorrect"
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
 
         try:
-            spvCVlist = np.genfromtxt(
-                self.config.CSVFilePath, skip_header=1, delimiter=",", filling_values=0
-            )
+            spvCVlist = np.genfromtxt(self.config.CSVFilePath, skip_header=1, delimiter=",", filling_values=0)
         except BaseException:
             return
         # Read table
-        spv_list = spvCVlist[:, 0].astype(int)
+        scans_per_voltage_list = spvCVlist[:, 0].astype(int)
         cv_list = spvCVlist[:, 1]
 
         timeFit = 3
         time_list = []
-        for i in spv_list:
+        for i in scans_per_voltage_list:
             timeFit = timeFit + i
             time_list.append(timeFit * self.config.iScanTime)
 
-        if len(spv_list) != len(cv_list):
+        if len(scans_per_voltage_list) != len(cv_list):
             return
 
-        total_acq_time = np.round(
-            (sum(spv_list) * self.config.iScanTime) / 60, 2
-        )
+        start_scan = 3
+        x1 = 0
+        start_end_cv_list = []
+        for i, cv in zip(scans_per_voltage_list, cv_list):
+            x2 = int(x1 + i)
+            start_end_cv_list.append([x1 + start_scan, x2 + start_scan, cv])
+            x1 = x2
+
+        total_acq_time = np.round((sum(scans_per_voltage_list) * self.config.iScanTime) / 60, 2)
         if total_acq_time > 300:
             msg = (
                 "The acquisition will take more than 5 hours. Consider reducing "
                 "your collision voltage range or adjusting the parameters!"
             )
-            dialogs.dlgBox(
-                exceptionTitle="Very long acquisition warning",
-                exceptionMsg=msg,
-                type="Warning",
-            )
+            dialogs.dlgBox(exceptionTitle="Very long acquisition warning", exceptionMsg=msg, type="Warning")
 
-        SPV_list = " ".join(str(spv) for spv in spv_list.tolist())
+        SPV_list = " ".join(str(spv) for spv in scans_per_voltage_list.tolist())
         SPV_list = "".join(["[", SPV_list, "]"])
         CV_list = " ".join(str(cv) for cv in cv_list.tolist())
         CV_list = "".join(["[", CV_list, "]"])
 
-        self.config.SPVsList = spv_list
+        self.config.SPVsList = scans_per_voltage_list
         self.config.CVsList = cv_list
 
         wrens_cmd = "".join(
@@ -500,10 +496,8 @@ class data_handling:
             "method": self.config.iActivationMode,
             "command": wrens_cmd,
         }
-        if self.config.iPolarity == "POSITIVE":
-            polarity = "+VE"
-        else:
-            polarity = "-VE"
+
+        polarity = self.check_polarity()
         self.view.SetStatusText(
             "".join(
                 [
@@ -518,4 +512,4 @@ class data_handling:
             ),
             number=2,
         )
-        return wrens_input, cv_list, spv_list, time_list, total_acq_time
+        return wrens_input, cv_list, scans_per_voltage_list, time_list, total_acq_time, start_end_cv_list

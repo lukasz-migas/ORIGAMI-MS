@@ -1,14 +1,13 @@
 import os
 import sys
-import zipfile
 from distutils.core import setup
 
 import matplotlib
 import numpy
-import py2exe
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.figure import Figure
 
+# import py2exe
+# from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+# from matplotlib.figure import Figure
 sys.setrecursionlimit(5000)
 
 # Compile program using:
@@ -85,7 +84,6 @@ py2exe_options = dict(
     dll_excludes=["Qt5Gui", "Qt5Widgets", "Qt5Svg", "Qt5Gui"],
     dist_dir=dist_dir,
 )
-
 
 # main setup
 setup(

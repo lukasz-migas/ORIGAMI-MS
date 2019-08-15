@@ -10,7 +10,6 @@
 # -------------------------------------------------------------------------
 import os.path
 
-import wx
 from utils.converters import str2int
 from utils.converters import str2num
 from wx.lib.embeddedimage import PyEmbeddedImage

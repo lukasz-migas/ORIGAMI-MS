@@ -51,13 +51,14 @@ class panelAbout(wx.MiniFrame):
         version = wx.StaticText(panel, -1, versionLabel, style=wx.ALIGN_CENTRE)
         version.SetFont(wx.SMALL_FONT)
 
-        copyright = wx.StaticText(panel, -1, "(c) 2017 Lukasz G. Migas")
-        copyright.SetFont(wx.SMALL_FONT)
+        copyright_msg = wx.StaticText(panel, -1, "(c) 2017-present Lukasz G. Migas")
+        copyright_msg.SetFont(wx.SMALL_FONT)
 
         message = wx.StaticText(
             panel,
             -1,
-            "If you encounter any problems, have questions or would like to send some feedback, please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.",
+            "If you encounter any problems, have questions or would like to send some feedback, "
+            + "please contact Lukasz Migas at lukasz.migas@manchester.ac.uk.",
         )
         message.SetFont(wx.SMALL_FONT)
         university = wx.StaticText(panel, -1, "University of Manchester")
@@ -83,7 +84,7 @@ class panelAbout(wx.MiniFrame):
         sizer.AddSpacer(10)
         sizer.Add(university, 0, wx.CENTER | wx.LEFT | wx.RIGHT, 20)
         sizer.AddSpacer(10)
-        sizer.Add(copyright, 0, wx.CENTER | wx.LEFT | wx.RIGHT, 20)
+        sizer.Add(copyright_msg, 0, wx.CENTER | wx.LEFT | wx.RIGHT, 20)
         sizer.AddSpacer(20)
         sizer.Add(homepageBtn, 0, wx.CENTER | wx.LEFT | wx.RIGHT, 20)
         sizer.AddSpacer(10)

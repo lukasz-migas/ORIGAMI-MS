@@ -31,6 +31,9 @@ class panelControls(wx.Panel):
         self.make_panel()
         self.on_toggle_controls(evt=None)
 
+    def _setup_after_startup(self):
+        self.calculateBtn.Bind(wx.EVT_BUTTON, self.presenter.data_handling.on_calculate_parameters)
+
     def make_panel(self):
 
         # Main sizer for the panel
@@ -86,7 +89,7 @@ class panelControls(wx.Panel):
         self.exponentialIncrm_input.Bind(wx.EVT_TEXT, self.on_apply)
         self.boltzmann_input.Bind(wx.EVT_TEXT, self.on_apply)
 
-        self.loadCSVBtn.Bind(wx.EVT_BUTTON, self.presenter.onLoadCSVList)
+        self.loadCSVBtn.Bind(wx.EVT_BUTTON, self.presenter.on_load_csv_list)
 
     def make_polarity_box(self):
 
@@ -288,7 +291,6 @@ class panelControls(wx.Panel):
 
         # make bindings
         self.pathBtn.Bind(wx.EVT_BUTTON, self.presenter.on_get_masslynx_path)
-        self.calculateBtn.Bind(wx.EVT_BUTTON, self.presenter.on_calculate_parameters)
         self.goBtn.Bind(wx.EVT_BUTTON, self.presenter.on_start_wrens_runner)
         self.stopBtn.Bind(wx.EVT_BUTTON, self.presenter.on_stop_wrens_runner)
 

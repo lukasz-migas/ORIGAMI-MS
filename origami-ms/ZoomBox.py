@@ -503,14 +503,6 @@ class ZoomBox:
             """Box too small"""  # check if drawed distance (if it exists) is
             return  # not to small in neither x nor y-direction
 
-        #         if wx.GetKeyState(wx.WXK_CONTROL):
-        #             # TODO: Send this signal up and drop it in a main GUI
-        #             # if the ctrl key is down, print out the difference and a guess for the Nanodisc mass assuming POPC
-        #             lmass = 760.076
-        #             charge = lmass / spanx
-        #             print spanx, charge, charge * xmax
-        #             return
-
         for axes in self.axes:
             axes.set_xlim((xmin, xmax))
             if spanflag == 1:

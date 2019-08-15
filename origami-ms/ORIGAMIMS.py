@@ -9,6 +9,7 @@
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
 import os
+import sys
 import webbrowser
 from subprocess import Popen
 from time import gmtime
@@ -67,15 +68,18 @@ class ORIGAMIMS(object):
         self.__wx_app.SetVendorName("Lukasz G Migas, University of Manchester")
 
         self.check_log_path()
-        #         # Log all events to
-        #         if self.logging:
-        #             sys.stdin = self.view.panelPlots.log
-        #             sys.stdout = self.view.panelPlots.log
-        #             sys.stderr = self.view.panelPlots.log
+        # Log all events to
+        if self.logging:
+            sys.stdin = self.view.panelPlots.log
+            sys.stdout = self.view.panelPlots.log
+            sys.stderr = self.view.panelPlots.log
 
         self.on_import_config_on_start(evt=None)
 
         self.data_handling = data_handling(self, self.view, self.config)
+
+        # setup after startup
+        self.view.panelControls._setup_after_startup()
 
     def check_log_path(self):
         log_directory = os.path.join(self.config.cwd, "logs")
@@ -102,56 +106,6 @@ class ORIGAMIMS(object):
         except BaseException:
             pass
 
-    def on_calculate_parameters(self, evt):
-        """
-        This function is to be used to setup path to save origami parameters
-        """
-
-        if not self.config.iActivationMode == "User-defined":
-            if self.data_handling.onCheckParameters() is False:
-                print("Please fill in all necessary fields first!")
-                return
-            divisibleCheck = abs(self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage
-            divisibleCheck2 = divisibleCheck % 1
-            if divisibleCheck2 != 0:
-                msg = "Are you sure your collision voltage range is divisible by your increment?"
-                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-                return
-        else:
-            if self.config.iScanTime is None or self.config.iScanTime == "":
-                msg = "Please make sure you to fill in the scan time input box."
-                dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-                return
-
-        if self.config.iActivationMode == "Linear":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime = (
-                self.data_handling.onPrepareLinearMethod()
-            )
-        elif self.config.iActivationMode == "Exponential":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime = (
-                self.data_handling.onPrepareExponentialMethod()
-            )
-        elif self.config.iActivationMode == "Boltzmann":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime = (
-                self.data_handling.onPrepareBoltzmannMethod()
-            )
-        elif self.config.iActivationMode == "User-defined":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime = (
-                self.data_handling.onPrepareListMethod()
-            )
-
-        self.wrensCMD = self.wrensInput.get("command", None)
-        # Setup status:
-        self.view.SetStatusText("".join(["Acq. time: ", str(totalAcqTime), " mins"]), number=0)
-        self.view.SetStatusText("".join([str(len(scanPerVoltageList)), " steps"]), number=1)
-
-        # Add wrensCMD to config file
-        self.config.wrensCMD = self.wrensCMD
-
-        self.on_plot_spv(ColEnergyX, scanPerVoltageList)
-        self.on_plot_time(ColEnergyX, timeList)
-        print("".join(["Your submission code: ", self.wrensCMD]))
-
     def on_start_wrens_runner(self, evt):
 
         if self.wrensCMD is None:
@@ -170,15 +124,24 @@ class ORIGAMIMS(object):
             dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
         if self.wrensInput.get("activationZone", None) != self.config.iActivationZone:
-            msg = "The activation zone of the current method and the one in the window do not agree. Consider re-calculating."
+            msg = (
+                "The activation zone of the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
             dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
         if self.wrensInput.get("method", None) != self.config.iActivationMode:
-            msg = "The acquisition mode of the current method and the one in the window do not agree. Consider re-calculating."
+            msg = (
+                "The acquisition mode of the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
             dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
         if self.wrensInput.get("command", None) != self.wrensCMD:
-            msg = "The command in the memory and the current method and the one in the window do not agree. Consider re-calculating."
+            msg = (
+                "The command in the memory and the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
             dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
             return
 
@@ -241,7 +204,7 @@ class ORIGAMIMS(object):
         print("".join(["List path: ", self.config.wrensUserDefinedPath]))
         print("".join(["Reset path: ", self.config.wrensResetPath]))
 
-    def onExportConfig(self, evt):
+    def on_export_config(self, evt):
         """
         This function exports configuration file
         """
@@ -264,7 +227,7 @@ class ORIGAMIMS(object):
             fileName = dlg.GetPath()
             self.config.exportOrigamiConfig(fileName=fileName, e=None)
 
-    def onLoadCSVList(self, evt):
+    def on_load_csv_list(self, evt):
         """
         This function loads a two column list with Collision voltage | number of scans
         """
@@ -274,22 +237,6 @@ class ORIGAMIMS(object):
         if dlg.ShowModal() == wx.ID_OK:
             print("You chose %s" % dlg.GetPath())
             self.config.CSVFilePath = dlg.GetPath()
-
-    def on_plot_spv(self, xvals, yvals):
-        self.view.panelPlots.plot1.clearPlot()
-        self.view.panelPlots.plot1.on_plot_1D(
-            xvals=xvals, yvals=yvals, title="", xlabel="Collision Voltage (V)", ylabel="SPV"
-        )
-        # Show the mass spectrum
-        self.view.panelPlots.plot1.repaint()
-
-    def on_plot_time(self, xvals, yvals):
-        self.view.panelPlots.plot2.clearPlot()
-        self.view.panelPlots.plot2.on_plot_1D(
-            xvals=xvals, yvals=yvals, title="", xlabel="Collision Voltage (V)", ylabel="Accumulated Time (s)"
-        )
-        # Show the mass spectrum
-        self.view.panelPlots.plot2.repaint()
 
 
 if __name__ == "__main__":

@@ -40,7 +40,7 @@ class panelPlot(wx.Panel):
         self.panelSPV = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelSPV, "Scans per Voltage", False)
 
-        self.plot1 = plot1D(self.panelSPV)
+        self.plot1 = plot_1D(self.panelSPV)
         box1 = wx.BoxSizer(wx.VERTICAL)
         box1.Add(self.plot1, 1, wx.EXPAND)
         self.panelSPV.SetSizer(box1)
@@ -48,15 +48,15 @@ class panelPlot(wx.Panel):
         self.panelTime = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.plotNotebook.AddPage(self.panelTime, "Acquisition time", False)
 
-        self.plot2 = plot1D(self.panelTime)
+        self.plot2 = plot_1D(self.panelTime)
         box2 = wx.BoxSizer(wx.VERTICAL)
         box2.Add(self.plot2, 1, wx.EXPAND)
         self.panelTime.SetSizer(box2)
 
         self.panelCVs = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-        self.plotNotebook.AddPage(self.panelCVs, "Collision Voltage steps", False)
+        self.plotNotebook.AddPage(self.panelCVs, "Collision voltage steps", False)
 
-        self.plot3 = plot1D(self.panelTime)
+        self.plot3 = plot_1D(self.panelCVs)
         box3 = wx.BoxSizer(wx.VERTICAL)
         box3.Add(self.plot3, 1, wx.EXPAND)
         self.panelCVs.SetSizer(box3)
@@ -90,8 +90,23 @@ class panelPlot(wx.Panel):
         savefile.write(self.log.GetValue())
         savefile.close()
 
+    def on_plot_spv(self, xvals, yvals):
+        self.plot1.clearPlot()
+        self.plot1.on_plot_1D(xvals, yvals, title="", xlabel="Collision Voltage (V)", ylabel="SPV")
+        self.plot1.repaint()
 
-class plot1D(plottingWindow):
+    def on_plot_time(self, xvals, yvals):
+        self.plot2.clearPlot()
+        self.plot2.on_plot_1D(xvals, yvals, title="", xlabel="Collision Voltage (V)", ylabel="Accumulated Time (s)")
+        self.plot2.repaint()
+
+    def on_plot_collision_voltages(self, xvals, yvals):
+        self.plot3.clearPlot()
+        self.plot3.on_plot_1D(xvals, yvals, title="", xlabel="Scans", ylabel="Collision Voltage (V)")
+        self.plot3.repaint()
+
+
+class plot_1D(plottingWindow):
     def __init__(self, *args, **kwargs):
         plottingWindow.__init__(self, *args, **kwargs)
         self.plotflag = False
