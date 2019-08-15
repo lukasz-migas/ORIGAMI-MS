@@ -10,6 +10,8 @@
 # -------------------------------------------------------------------------
 import os.path
 
+import wx
+from icons.embed import icons as icons_16
 from utils.converters import str2int
 from utils.converters import str2num
 from wx.lib.embeddedimage import PyEmbeddedImage
@@ -202,9 +204,6 @@ class config:
 class IconContainer:
     def __init__(self):
 
-        self.icons()
-
-    def icons(self):
         origamiLogo = PyEmbeddedImage(
             "iVBORw0KGgoAAAANSUhEUgAAAcoAAADgCAIAAAAMvrFvAAAABGdBTUEAALGPC/xhBQAAAAlw"
             "SFlzAAAOwwAADsMBx2+oZAAAN6BJREFUeF7tnQd8FGX+/7M7szW9Z5eiIF1ALFjwVOAnIiDH"
@@ -474,3 +473,10 @@ class IconContainer:
             "SEj4/08YXTiH8v1hAAAAAElFTkSuQmCC"
         )
         self.getLogo = origamiLogo.GetBitmap()
+
+        self.getIcons16Data = icons_16.GetData
+        self.getIcons16Image = icons_16.GetImage
+        self.getIcons16Bitmap = icons_16.GetBitmap
+        self.iconsLib = {}
+        icons16 = self.getIcons16Bitmap()
+        self.iconsLib["origami_logo_16"] = icons16.GetSubBitmap(wx.Rect(0, 0, 16, 16))

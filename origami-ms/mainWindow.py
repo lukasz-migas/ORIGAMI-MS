@@ -33,11 +33,9 @@ class MyFrame(wx.Frame):
         self.config = config
         self.icons = icons
 
-        try:
-            icon = wx.Icon("icon.ico", wx.BITMAP_TYPE_ICO, 16, 16)
-            self.SetIcon(icon)
-        except BaseException:
-            pass
+        icon = wx.Icon()
+        icon.CopyFromBitmap(self.icons.iconsLib["origami_logo_16"])
+        self.SetIcon(icon)
 
         # Setup Notebook manager
         self._mgr = wx.aui.AuiManager(self)
@@ -78,6 +76,8 @@ class MyFrame(wx.Frame):
         self._mgr.Update()
         self.make_statusbar()
         self.make_menubar()
+
+        self.Bind(wx.EVT_CLOSE, self.presenter.quit)
 
     def make_menubar(self):
 

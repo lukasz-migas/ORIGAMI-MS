@@ -22,12 +22,13 @@ class panelAbout(wx.MiniFrame):
 
         self.parent = parent
         self.presenter = presenter
-
         self.config = config
         self.icons = icons
+
+        self.Bind(wx.EVT_CLOSE, self.onClose)
+
         # make gui items
         sizer = self.makeGUI()
-        wx.EVT_CLOSE(self, self.onClose)
 
         # fit layout
         self.Layout()
@@ -100,5 +101,3 @@ class panelAbout(wx.MiniFrame):
     def onClose(self, evt):
         """Destroy this frame."""
         self.Destroy()
-
-    # ----

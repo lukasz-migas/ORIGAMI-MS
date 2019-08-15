@@ -1,7 +1,6 @@
 import numpy as np
 import wx
 from matplotlib.patches import Rectangle
-from pubsub import pub
 
 
 # FIXME: This function doesn't quite work as it should.
@@ -361,28 +360,9 @@ class ZoomBox:
                     Xvalues = axes.get_xlim()
                     Yvalues = axes.get_ylim()
 
-                    # Sends message to add data to table
-                    pub.sendMessage("add2table", xvalsMin=Xvalues[0], xvalsMax=Xvalues[1], yvalsMax=Yvalues[1])
-                    #                     pub.sendMessage('add2table', ((values)))
-                    #                         pub.sendMessage('add2table', values[0], )
                     return True
                 else:
                     return False
-
-        #         # Only do selection if event was triggered with a desired button
-        #         if self.validButtons is not None:
-        #             if not evt.button in self.validButtons:
-        #                 if evt.button == 3 and self.integrate == 1:
-        #                     # print "rightclick"
-        #                     pub.sendMessage('integrate')
-        #                 elif evt.button == 3 and self.smash == 1:
-        #                     if evt.dblclick:
-        #                         pub.sendMessage('smash')
-        #                     else:
-        #                         pub.sendMessage('mzlimits')
-        #                 elif evt.button == 2:
-        #                     pub.sendMessage('middle_click')
-        #                 return True
 
         # If no button pressed yet or if it was out of the axes, ignore
         if self.eventpress is None:
@@ -420,9 +400,6 @@ class ZoomBox:
         if self.eventpress.xdata == evt.xdata and self.eventpress.ydata == evt.ydata:
 
             if wx.GetKeyState(wx.WXK_CONTROL):
-                # Ignore the resize if the control key is down
-                if evt.button == 1:  # and self.smash == 1:
-                    pub.sendMessage("left_click", xpos=evt.xdata, ypos=evt.ydata)
                 return
             # x0,y0,x1,y1=GetMaxes(evt.inaxes)
             # print GetMaxes(evt.inaxes)
@@ -443,11 +420,6 @@ class ZoomBox:
             for axes in self.axes:
                 if axes.get_xlim() != (xmin, xmax) and axes.get_ylim() != (ymin, ymax):
                     zoomout = True
-            # Register a click if zoomout was not necessary
-            if not zoomout:
-                if evt.button == 1:  # and self.smash == 1:
-                    pub.sendMessage("left_click", xpos=evt.xdata, ypos=evt.ydata)
-
             for axes in self.axes:
                 axes.set_xlim(xmin, xmax)
                 axes.set_ylim(ymin, ymax)

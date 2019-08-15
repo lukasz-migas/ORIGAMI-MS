@@ -35,19 +35,19 @@ logging.getLogger("matplotlib").setLevel(logging.ERROR)
 class ORIGAMIMS(object):
     def __init__(self, *args, **kwargs):
 
-        self.__wx_app = wx.App(redirect=False)
+        self.__wx_app = wx.App(*args, **kwargs)
         self.run = None
         self.view = None
         self.initilize(*args, **kwargs)
 
     def start(self):
         """Start app"""
-        self.view.Show()
+        # self.view.Show()
         self.__wx_app.MainLoop()
 
-    def quit(self):
+    def quit(self, evt):
         """Quit app"""
-        self.__wx_app.ProcessIdle()
+        self.view._mgr.UnInit()
         self.__wx_app.ExitMainLoop()
         self.view.Destroy()
         return True
@@ -62,6 +62,8 @@ class ORIGAMIMS(object):
         self.icons = config.IconContainer()
 
         self.view = mainWindow.MyFrame(self, config=self.config, icons=self.icons, title="ORIGAMI-MS")
+        self.view.Show()
+
         self.wrensCMD = None
         self.wrensRun = None
         self.wrensReset = None
@@ -245,5 +247,5 @@ class ORIGAMIMS(object):
 
 
 if __name__ == "__main__":
-    app = ORIGAMIMS()
+    app = ORIGAMIMS(redirect=False)
     app.start()
