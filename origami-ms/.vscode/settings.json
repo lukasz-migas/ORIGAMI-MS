@@ -3,5 +3,11 @@
         "activityBar.background": "#27311C",
         "titleBar.activeBackground": "#374428",
         "titleBar.activeForeground": "#FAFBF9"
-    }
+    },
+    "python.pythonPath": "C:\\Miniconda3\\envs\\origami-ms\\python.exe",
+    "python.formatting.provider": "black",
+    "python.linting.pylintEnabled": false,
+    "python.linting.pep8Enabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
 }
