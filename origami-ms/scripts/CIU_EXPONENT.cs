@@ -6,10 +6,10 @@
 
 
 // CONSTANTS (don't change...)
-int waitTime = 100; // don't change 
+int waitTime = 100; // don't change
 int test = 1;
 int multiplier = 1000; // it should be 1000, used for testing
-int splitter = 20; // 
+int splitter = 20; //
 int startStopCounter = 3; // determines how many scans the start/stop should operate for
 double ExpValueAccumulator = 0;
 /// ******* \\\
@@ -18,22 +18,22 @@ double ExpValueAccumulator = 0;
 public override void main()
 {
    string[] userSettings=Argument.Split(',');
-  
-  string disclaimerText = 
-    @"    
+
+  string disclaimerText =
+    @"
         ----------- MESSAGE FROM THE AUTHORS-----------
-    This program is free software. Feel free to redistribute it and/or modify it 
-    under the condition you cite and credit the authors whenever appropriate. 
-    The program is distributed in the hope that it will be useful but is provided 
-    WITHOUT ANY WARRANTY! 
-                          
+    This program is free software. Feel free to redistribute it and/or modify it
+    under the condition you cite and credit the authors whenever appropriate.
+    The program is distributed in the hope that it will be useful but is provided
+    WITHOUT ANY WARRANTY!
+
     If you encounter any problems, have questions or would like to send some
     love/hate, please send to Lukasz G. Migas (lukasz.migas@manchester.ac.uk)
     ----------- MESSAGE FROM THE AUTHORS -----------
     ";
-                          
+
   print(disclaimerText);
-  string parametersInfo = 
+  string parametersInfo =
     @"    Available parameters:
     Activation type: 'TRAP' or 'CONE' [string]
     Ion polarity: 'POSITIVE' or 'NEGATIVE' [string]
@@ -42,15 +42,15 @@ public override void main()
     Start voltage: [float]
     End voltage: [float]
     Step voltage: min 0.1 [float]
-    Exponential %: min 0, max 100 [float] 
-    Exponential increment: min 0, max 0.05 [float] 
+    Exponential %: min 0, max 100 [float]
+    Exponential increment: min 0, max 0.05 [float]
     Total acquisition time: [float]
     ";
-  
+
   print(parametersInfo);
- 
-  
-  // Split the text into parts 
+
+
+  // Split the text into parts
   print("Your parameters:");
   string activationType=userSettings[0]; print("Activation Type: "+activationType);
   string ionPolarity=userSettings[1]; print("Ion Polarity: "+ionPolarity);
@@ -60,34 +60,34 @@ public override void main()
   string endVoltageSt=userSettings[5]; print("End Voltage (V): "+endVoltageSt);
   string stepVoltageSt=userSettings[6]; print("Increment Voltage (V): "+stepVoltageSt);
   string xExpPercentageSt=userSettings[7]; print("Exponential %: "+xExpPercentageSt);
-  string xExpValueSt=userSettings[8]; print("Exponential increment: "+xExpValueSt);  
+  string xExpValueSt=userSettings[8]; print("Exponential increment: "+xExpValueSt);
   string totalAcqTimeSt=userSettings[9]; print("Total acquisition time (min): "+totalAcqTimeSt);
-  
+
   // Extract the values and convert them to appropriate format
-  int scanPerVoltage = Int32.Parse(scanPerVoltageSt); 
-  int scantime = Int32.Parse(scantimeSt); 
-  double startVoltage = Double.Parse(startVoltageSt); 
-  double endVoltage = Double.Parse(endVoltageSt); 
-  double stepVoltage = Double.Parse(stepVoltageSt); 
+  int scanPerVoltage = Int32.Parse(scanPerVoltageSt);
+  int scantime = Int32.Parse(scantimeSt);
+  double startVoltage = Double.Parse(startVoltageSt);
+  double endVoltage = Double.Parse(endVoltageSt);
+  double stepVoltage = Double.Parse(stepVoltageSt);
   double xExpPercentage = Double.Parse(xExpPercentageSt);
   double xExpValue = Double.Parse(xExpValueSt);
-  double totalAcqTime = Double.Parse(totalAcqTimeSt); 
+  double totalAcqTime = Double.Parse(totalAcqTimeSt);
 
   int scanPerVoltageSave = scanPerVoltage;
   int scanPerVoltageBackup = scanPerVoltage;
   // Pre-calculate approximate time of execution
   double numberOfScans = (totalAcqTime*60)/scantime;
-     
+
   print("------------------------------------------");
   print("Minimum (approx.) time of acqusition: "+Math.Round(totalAcqTime,2).ToString()+" minutes");
   print("Number of scans: "+Math.Round(numberOfScans,0).ToString());
 
   print("");
-  print("----------- JUST IN CASE -----------"); 
+  print("----------- JUST IN CASE -----------");
   print("If you encounter problems, please run the StopWREnS script provided and Reinitilise MassLynx");
   print("----------- JUST IN CASE -----------");
   print("");
-  
+
   // Blanks
   string wrensCMD;
   string startCMD;
@@ -124,14 +124,14 @@ public override void main()
     if (ionPolarity == "POSITIVE")
     {
       wrensCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,";
-      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-20,false"; 
+      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-20,false";
       resetCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,30,false";
       getValueFrom = "SAMPLE_CONE_VOLTAGE_SETTING";
     }
     else if (ionPolarity == "NEGATIVE")
     {
       wrensCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING, -";
-      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,20,false"; 
+      startCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,20,false";
       resetCMD = "addPropV,0,SAMPLE_CONE_VOLTAGE_SETTING,-30,false";
       getValueFrom = "SAMPLE_CONE_VOLTAGE_SETTING";
     }
@@ -173,9 +173,9 @@ public override void main()
         {
           scanPerVoltage=scanPerVoltageBackup;
         }
-      // For some reason WREnS has a built-in timeout, so when the SPV is too large (above 23) then it will 
+      // For some reason WREnS has a built-in timeout, so when the SPV is too large (above 23) then it will
       // give an error. This while function prevents that from happening by restricting SPV to maximum
-      // of the splitter. 
+      // of the splitter.
       while (scanPerVoltage > splitter)
       {
         int difference = scanPerVoltage-splitter;
@@ -224,7 +224,7 @@ public override void main()
     disable_data_capture();
     send_cmd("initPropertyArraysV");//clears old property banks
     stop_function("WrensStartScan","writePropertyBankV");
-    print("Finished ramping Collision Voltage."); 
+    print("Finished ramping Collision Voltage.");
   }
  }
  {
