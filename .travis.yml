@@ -5,7 +5,7 @@ cache:
   pip: true
 
 python:
-  - "3.6"
+  - "3.7"
 
 addons:
   apt:
@@ -26,10 +26,6 @@ sudo: false
 matrix:
   # jobs
   include:
-    # linux - 3.7
-    - env: Image=Linux_37
-      python: 3.7
-      dist: xenial
     # windows10 - 3.7
     - env:
         - Image=Win10_37
@@ -58,18 +54,11 @@ before_install:
   - SRC_DIR=$(pwd)
   - echo $SRC_DIR
   - ls || dir
-  # See https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI :
-  - if [ "${Image}" == "Linux_37" ]; then
-    /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16;
-    fi;
 
-# https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-14.04/wxPython-4.0.6-cp36-cp36m-linux_x86_64.whl
 install:
   - pip install --upgrade pip || pip3 install --upgrade pip
   - pip install -r origamims_requirements.txt
-  - if [[ "${Image}" == "Linux_37" ]]; then
-    pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-14.04 wxPython;
-    elif [[ "${Image}" == "Win10_37" ]]; then
+  - if [[ "${Image}" == "Win10_37" ]]; then
     pip install -U wxPython;
     fi;
 
@@ -84,14 +73,6 @@ install:
   - ls || dir
   - cd origami-ms
 
-  before_script:
-  # See https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI :
-  - if [ "${Image}" == "Linux_37" ]; then
-    export DISPLAY=:99.0;
-    sh -e /etc/init.d/xvfb start;
-    sleep 3;
-    fi;
-
 script:
   - echo $SRC_DIR
   - if [[ "${TEST}" == "flake" ]]; then
@@ -99,8 +80,6 @@ script:
     elif [[ "${TEST}" == "coverage" ]]; then
     py.test --cov;
     elif [[ "${Image}" == "Win10_37" ]]; then
-    python3 ORIGAMIMS.py || python ORIGAMIMS.py;
-    elif [[ "${Image}" == "Linux_37" ]]; then
     python3 ORIGAMIMS.py || python ORIGAMIMS.py;
     fi;
 
