@@ -16,9 +16,9 @@ from subprocess import Popen
 from time import gmtime
 from time import strftime
 
-import config as config
+import config
 import dialogs
-import mainWindow as mainWindow
+import mainWindow
 import wx
 from data_handling import data_handling
 from IDs import ID_helpCite
