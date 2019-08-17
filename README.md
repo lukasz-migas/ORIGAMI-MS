@@ -11,7 +11,7 @@ ORIGAMI-MS is a data acquisition software
 
 - Easy-to-use graphical user interface to control data acquisition
 - Enable quicker acquisition of CIU/aIMS-type datasets on Waters Synapt instruments
-- All activation data is contained within ONE file which simplifies analysis and storage [see note]
+- All activation data is contained within ONE file which simplifies analysis and storage
 - Multiple built-in methods to increase signal-to-noise during data acquisition
 
 ## User interface

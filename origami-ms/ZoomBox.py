@@ -3,10 +3,6 @@ import wx
 from matplotlib.patches import Rectangle
 
 
-# FIXME: This function doesn't quite work as it should.
-# If we left click and the right click it gets locked for some reason.
-# Check why is this happening!
-# TODO enable vertical line (i.e. scale low intensity ions!)
 def GetMaxes(axes, xmin=None, xmax=None):
     yvals = []
     xvals = []
@@ -90,7 +86,9 @@ def GetMaxes(axes, xmin=None, xmax=None):
             yvals.append([y, y])
             xvals.append([x, x])
 
-    if len(yvals) != 0 and len(xvals) != 0:
+    n_xvals = len(xvals)
+    n_yvals = len(yvals)
+    if n_yvals != 0 and n_xvals != 0:
         ymin = np.amin(np.ravel(yvals))
         ymax = np.amax(np.ravel(yvals))
         if xmin is None or xmax is None:
@@ -159,14 +157,6 @@ class GetXValues:
                 self.canvas.mpl_disconnect(cid)
                 print("disconnected")
             self.canvas = axes[0].figure.canvas
-
-        #         print(self.canvas.axes.get_xlim())
-
-        for axes in self.axes:
-            print(axes.get_xlim())
-
-
-#         print('i am in')
 
 
 class ZoomBox:
@@ -305,9 +295,9 @@ class ZoomBox:
             xmax = xmin * 1.0001
         if ymin == ymax:
             ymax = ymin * 1.0001
-        for axes in self.axes:
-            axes.set_xlim(xmin, xmax)
-            axes.set_ylim(ymin, ymax)
+        for _axes in self.axes:
+            _axes.set_xlim(xmin, xmax)
+            _axes.set_ylim(ymin, ymax)
 
     #             print self.data_lims
 
@@ -327,11 +317,11 @@ class ZoomBox:
             rectprops = dict(facecolor="white", edgecolor="black", alpha=0.5, fill=False)
         self.rectprops = rectprops
 
-        for axes in self.axes:
+        for _axes in self.axes:
             self.to_draw.append(Rectangle((0, 0), 0, 1, visible=False, **self.rectprops))
 
-        for axes, to_draw in zip(self.axes, self.to_draw):
-            axes.add_patch(to_draw)
+        for _axes, to_draw in zip(self.axes, self.to_draw):
+            _axes.add_patch(to_draw)
 
     def update_background(self, evt):
         "force an update of the background"
@@ -352,17 +342,11 @@ class ZoomBox:
         if self.validButtons is not None:
             if evt.button not in self.validButtons:
                 if evt.button == 3:
-                    #                     print('right click');
                     return True
                 elif evt.button == 2 and self.eventrelease is None:
-                    #                     for axes in self.axes:
-                    axes = self.axes[0]
-                    Xvalues = axes.get_xlim()
-                    Yvalues = axes.get_ylim()
-
                     return True
-                else:
-                    return False
+
+                return False
 
         # If no button pressed yet or if it was out of the axes, ignore
         if self.eventpress is None:
@@ -416,14 +400,10 @@ class ZoomBox:
                 ymax = ymin * 1.0001
 
             # Check if a zoom out is necessary
-            zoomout = False
-            for axes in self.axes:
-                if axes.get_xlim() != (xmin, xmax) and axes.get_ylim() != (ymin, ymax):
-                    zoomout = True
-            for axes in self.axes:
-                axes.set_xlim(xmin, xmax)
-                axes.set_ylim(ymin, ymax)
-                ResetVisible(axes)
+            for _axes in self.axes:
+                _axes.set_xlim(xmin, xmax)
+                _axes.set_ylim(ymin, ymax)
+                ResetVisible(_axes)
 
             self.canvas.draw()
             return
@@ -472,14 +452,13 @@ class ZoomBox:
         xproblems = self.minspanx is not None and spanx < self.minspanx
         yproblems = self.minspany is not None and spany < self.minspany
         if xproblems or yproblems:
-            """Box too small"""  # check if drawed distance (if it exists) is
             return  # not to small in neither x nor y-direction
 
-        for axes in self.axes:
-            axes.set_xlim((xmin, xmax))
+        for _axes in self.axes:
+            _axes.set_xlim((xmin, xmax))
             if spanflag == 1:
-                xmin, ymin, xmax, ymax = GetMaxes(axes, xmin=xmin, xmax=xmax)
-            axes.set_ylim((ymin, ymax))
+                xmin, ymin, xmax, ymax = GetMaxes(_axes, xmin=xmin, xmax=xmax)
+            _axes.set_ylim((ymin, ymax))
 
         self.canvas.draw()
 
@@ -513,8 +492,8 @@ class ZoomBox:
         if self.useblit:
             if self.background is not None:
                 self.canvas.restore_region(self.background)
-            for axes, to_draw in zip(self.axes, self.to_draw):
-                axes.draw_artist(to_draw)
+            for _axes, to_draw in zip(self.axes, self.to_draw):
+                _axes.draw_artist(to_draw)
             self.canvas.blit(self.canvas.figure.bbox)
         else:
             self.canvas.draw_idle()
@@ -544,8 +523,8 @@ class ZoomBox:
             return
 
         # Changes from a yellow box to a colored line
-        for axes in self.axes:
-            y0, y1 = axes.get_ylim()
+        for _axes in self.axes:
+            y0, y1 = _axes.get_ylim()
 
         if abs(maxy - miny) < abs(y1 - y0) * self.crossoverpercent:
             # print self.to_draw
@@ -596,9 +575,7 @@ class ZoomBox:
 
     def set_active(self, active):
         """ Use this to activate / deactivate the RectangleSelector
-
-            from your program with an boolean variable 'active'.
-        """
+            from your program with an boolean variable 'active'."""
         self.active = active
 
     def get_active(self):

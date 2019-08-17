@@ -10,7 +10,6 @@
 # -------------------------------------------------------------------------
 import logging
 import os
-import sys
 import webbrowser
 from time import gmtime
 from time import strftime
