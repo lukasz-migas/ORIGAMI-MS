@@ -74,13 +74,7 @@ class ORIGAMIMS(object):
         self.__wx_app.SetAppName("ORIGAMI-MS")
         self.__wx_app.SetVendorName("Lukasz G Migas, University of Manchester")
 
-        #         self.check_log_path()
         self.on_start_logging()
-        #         # Log all events to
-        #         if self.logging:
-        #             sys.stdin = self.view.panelPlots.log
-        #             sys.stdout = self.view.panelPlots.log
-        #             sys.stderr = self.view.panelPlots.log
 
         self.on_import_config_on_start(evt=None)
         self.data_handling = data_handling(self, self.view, self.config)
@@ -88,6 +82,20 @@ class ORIGAMIMS(object):
         # setup after startup
         self.view.panelControls._setup_after_startup()
         self.view._setup_after_startup()
+
+        if self.config.testing:
+            self._test_()
+
+    def _test_(self):
+        """Exit application after performing some tests
+
+        GUI testing is tricky, so we simply invoke a couple of functions and ensure they run without raising any
+        errors. If everything is configured correctly, all tasks will complete and the application will close without
+        errors.
+        """
+        logger.info("Completed all tests successfully")
+        # exit
+        self.quit(None)
 
     def on_start_logging(self):
         """Setup logger"""

@@ -27,6 +27,8 @@ class config:
         self.cwd = None
         self.loggingFile_path = None
         self.version = "1.1.0"
+        self.testing = False
+
         self.links = {
             "home": "https://www.click2go.umip.com/i/s_w/ORIGAMI.html",
             "github": "https://github.com/lukasz-migas/ORIGAMI-MS",
