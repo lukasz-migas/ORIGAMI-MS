@@ -1,6 +1,13 @@
+import logging
+import os
+from subprocess import Popen
+
 import dialogs
 import numpy as np
+import wx
 from exception import MessageError
+
+logger = logging.getLogger("origami")
 
 
 class data_handling:
@@ -9,6 +16,91 @@ class data_handling:
         self.presenter = presenter
         self.view = view
         self.config = config
+
+    def on_update_wrens_path(self, evt):
+        """Update WREnS script path"""
+
+        # get default
+        dirname, __ = os.path.split(self.config.wrensRunnerPath)
+
+        dlg = wx.FileDialog(
+            self.view,
+            "Find WREnS runner (ScriptRunnerLight.exe)",
+            wildcard="*.exe",
+            style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR,
+        )
+
+        if os.path.isdir(dirname):
+            dlg.SetPath(dirname)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            fileName = dlg.GetPath()
+
+            self.config.wrensRunnerPath = fileName
+            self.config.update_wrens_paths(True)
+
+    def on_start_wrens_runner(self, evt):
+        """Start WREnS runner"""
+        if self.config.wrensCMD is None:
+            msg = "Are you sure you filled in correct details or pressed calculate?"
+            dialogs.dlgBox(
+                exceptionTitle="Please complete all necessary fields and press Calculate",
+                exceptionMsg=msg,
+                type="Error",
+            )
+            return
+
+        # A couple of checks to ensure the method in the settings is the one
+        # currently available in memory..
+        if self.config.wrensInput.get("polarity", None) != self.config.iPolarity:
+            msg = "The polarity of the current method and the one in the window do not agree. Consider re-calculating."
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+            return
+        if self.config.wrensInput.get("activationZone", None) != self.config.iActivationZone:
+            msg = (
+                "The activation zone of the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+            return
+        if self.config.wrensInput.get("method", None) != self.config.iActivationMode:
+            msg = (
+                "The acquisition mode of the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+            return
+        if self.config.wrensInput.get("command", None) != self.config.wrensCMD:
+            msg = (
+                "The command in the memory and the current method and the one in the window do not agree."
+                + " Consider re-calculating."
+            )
+            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
+            return
+
+        if not os.path.isfile(self.config.wrensRunnerPath):
+            raise MessageError(
+                "Path does not exist",
+                "It would appear that the path to WREnS script runner does not exists."
+                + f"\nAre you sure that the script is found here: \n\n{self.config.wrensLinearPath} ",
+            )
+
+        logger.info("".join(["Your code: ", self.config.wrensCMD]))
+
+        self.config.wrensRun = Popen(self.config.wrensCMD)
+
+    def on_stop_wrens_runner(self, evt):
+        """Stop WREnS script"""
+
+        if self.config.wrensRun:
+            logger.info("Stopped acquisition and reset the property banks")
+            self.config.wrensRun.kill()
+            self.config.wrensReset = Popen(self.config.wrensResetPath)
+            self.view.panelControls.goBtn.Enable()
+        else:
+            raise MessageError(
+                "Start acquisition first", "In order to stop WREnS runner, you have to start acquisition first"
+            )
 
     def on_check_parameters(self):
         """This function checks that all variables are in correct format"""
@@ -107,7 +199,7 @@ class data_handling:
 
         if not self.config.iActivationMode == "User-defined":
             if self.on_check_parameters() is False:
-                print("Please fill in all necessary fields first!")
+                logger.info("Please fill in all necessary fields first!")
                 return
             divisibleCheck = abs(self.config.iEndVoltage - self.config.iStartVoltage) / self.config.iStepVoltage
             divisibleCheck2 = divisibleCheck % 1
@@ -122,19 +214,19 @@ class data_handling:
                 return
 
         if self.config.iActivationMode == "Linear":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+            self.config.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
                 self.on_calculate_linear_method()
             )
         elif self.config.iActivationMode == "Exponential":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+            self.config.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
                 self.on_calculate_exponential_method()
             )
         elif self.config.iActivationMode == "Boltzmann":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+            self.config.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
                 self.on_calculate_boltzmann_method()
             )
         elif self.config.iActivationMode == "User-defined":
-            self.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
+            self.config.wrensInput, ColEnergyX, scanPerVoltageList, timeList, totalAcqTime, start_end_cv_list = (
                 self.on_calculate_user_list_method()
             )
 
@@ -146,12 +238,12 @@ class data_handling:
         self.view.SetStatusText(f"{len(scanPerVoltageList):d} steps", number=1)
 
         # Add wrensCMD to config file
-        self.config.wrensCMD = self.wrensInput.get("command", None)
+        self.config.wrensCMD = self.config.wrensInput.get("command", None)
 
         self.view.panelPlots.on_plot_spv(ColEnergyX, scanPerVoltageList)
         self.view.panelPlots.on_plot_time(ColEnergyX, timeList)
         self.view.panelPlots.on_plot_collision_voltages(scans, voltages)
-        print(f"Your submission code: {self.config.wrensCMD}")
+        logger.info(f"Your submission code: {self.config.wrensCMD}")
 
     def check_acquisition_time(self, acq_time):
         # hard error

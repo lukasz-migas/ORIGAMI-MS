@@ -20,9 +20,7 @@ from utils.converters import str2num
 
 class panelControls(wx.Panel):
     def __init__(self, parent, presenter, config):
-        wx.Panel.__init__(
-            self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(600, 400), style=wx.TAB_TRAVERSAL
-        )
+        wx.Panel.__init__(self, parent)
 
         self.parent = parent
         self.presenter = presenter
@@ -32,7 +30,10 @@ class panelControls(wx.Panel):
         self.on_toggle_controls(evt=None)
 
     def _setup_after_startup(self):
+        """Bind functions after intilization of `data_handling` module"""
         self.calculateBtn.Bind(wx.EVT_BUTTON, self.presenter.data_handling.on_calculate_parameters)
+        self.goBtn.Bind(wx.EVT_BUTTON, self.presenter.data_handling.on_start_wrens_runner)
+        self.stopBtn.Bind(wx.EVT_BUTTON, self.presenter.data_handling.on_stop_wrens_runner)
 
     def make_panel(self):
 
@@ -291,9 +292,6 @@ class panelControls(wx.Panel):
 
         # make bindings
         self.pathBtn.Bind(wx.EVT_BUTTON, self.presenter.on_get_masslynx_path)
-        self.goBtn.Bind(wx.EVT_BUTTON, self.presenter.on_start_wrens_runner)
-        self.stopBtn.Bind(wx.EVT_BUTTON, self.presenter.on_stop_wrens_runner)
-
         self.saveParametersBtn.Bind(wx.EVT_BUTTON, self.presenter.on_save_parameters)
 
         mainSizer.Add(grid, 0, wx.ALIGN_CENTER | wx.ALL, 5)

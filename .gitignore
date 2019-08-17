@@ -115,3 +115,4 @@ dmypy.json
 origami-ms/.project
 origami-ms/.pydevproject
 *.prefs
+.vscode/settings.json

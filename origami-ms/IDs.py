@@ -10,12 +10,14 @@
 # -------------------------------------------------------------------------
 from wx import NewId
 
-ID_setMassLynxPath = NewId()
+ID_on_set_masslynx_path = NewId()
 ID_on_import_config = NewId()
-ID_exportConfigFile = NewId()
+ID_on_set_wrens_path = NewId()
+ID_on_export_config = NewId()
 
 ID_SHOW_ABOUT = NewId()
 ID_helpHomepage = NewId()
 ID_helpCite = NewId()
 ID_helpNewVersion = NewId()
 ID_helpGitHub = NewId()
+ID_helpDocumentation = NewId()

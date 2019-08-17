@@ -1,0 +1,65 @@
+# Site settings
+site_name: ORIGAMI-MS
+site_description: "ORIGAMI-MS is an open-source software for acquisition of CIU/aIMS-type datasets on Waters Synapt instruments."
+site_author: Lukasz G. Migas
+
+copyright: <a href='http://github.com/lukasz-migas'>Lukasz G. Migas</a>
+
+site_url: https://origami-ms.lukasz-migas.com
+repo_url: https://github.com/lukasz-migas/ORIGAMI-MS
+edit_uri: https://github.com/lukasz-migas/ORIGAMI-MS/tree/master/site-source
+
+use_directory_urls: false
+
+google_analytics: ["UA-130097236-2", "https://origami-ms.lukasz-migas.com"]
+docs_dir: "site-source"
+site_dir: "docs"
+
+markdown_extensions:
+  - admonition
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - toc:
+      permalink: true
+
+# Extra CCS
+extra_css:
+  - css/justify.css
+
+# Page layout
+nav:
+  - Home: index.md
+  - Installation: main/installation.md
+  - User Guide:
+      - "How it works": user-guide/how-it-works.md
+      - "Available methods": user-guide/available-methods.md
+      - "Compiling WREnS scripts": user-guide/compilation.md
+      - "Usage": user-guide/usage.md
+      - "Troubleshooting": user-guide/troubleshooting.md
+  - Request New Features: main/request.md
+  - Report Bugs: main/bugs.md
+  - Newsletter: main/subscribe.md
+  - Cite: main/cite.md
+  - About: main/about.md
+
+theme:
+  name: material
+  language: "en"
+  include_sidebar: true
+  palette:
+    primary: "blue grey"
+    accent: "teal"
+  feature:
+    tabs: true
+
+extra:
+  version: 1.1.0
+  social:
+    - type: "youtube"
+      link: "https://www.youtube.com/playlist?list=PLrPB7zfH4WXMYa5CN9qDtl-G-Ax_L6AK8"
+    - type: "github"
+      link: "https://github.com/lukasz-migas"
+    - type: "twitter"
+      link: "https://twitter.com/munieq11"
+    - type: "link"
+      link: "https://lukasz-migas.com"

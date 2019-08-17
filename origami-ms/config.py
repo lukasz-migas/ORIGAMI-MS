@@ -8,6 +8,7 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
+import logging
 import os.path
 
 import wx
@@ -16,11 +17,11 @@ from utils.converters import str2int
 from utils.converters import str2num
 from wx.lib.embeddedimage import PyEmbeddedImage
 
+logger = logging.getLogger("origami")
+
 
 class config:
-    """
-    Configuration file that shares data between modules
-    """
+    """Configuration file that shares data between modules"""
 
     def __init__(self):
         self.cwd = None
@@ -32,6 +33,7 @@ class config:
             "github_origami_analyse": "https://github.com/lukasz-migas/ORIGAMI",
             "cite": "https://doi.org/10.1016/j.ijms.2017.08.014",
             "newVersion": "https://github.com/lukasz-migas/ORIGAMI-MS/releases",
+            "documentation": "http://origami-ms.lukasz-migas.com/",
         }
 
         self.iPolarity = None
@@ -45,7 +47,12 @@ class config:
         self.iExponentPerct = None
         self.iExponentIncre = None
         self.iBoltzmann = None
+
+        self.currentPath = ""
         self.wrensCMD = None
+        self.wrensInput = {"polarity": None, "activationZone": None, "method": None, "command": None}
+        self.wrensRun = None
+        self.wrensReset = None
 
         self.CVsList = None
         self.SPVsList = None
@@ -55,23 +62,36 @@ class config:
 
         self.wrensRunnerPath = "C:/Program Files (x86)/Wrens/Bin/ScriptRunnerLight.exe"
         self.wrensLinearName = "CIU_LINEAR.dll"
-        self.wrensLinearPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensLinearName, ' "'])
         self.wrensExponentName = "CIU_EXPONENT.dll"
-        self.wrensExponentPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensExponentName, ' "'])
         self.wrensBoltzmannName = "CIU_FITTED.dll"
-        self.wrensBoltzmannPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensBoltzmannName, ' "'])
         self.wrensUserDefinedName = "CIU_LIST.dll"
-        self.wrensUserDefinedPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensUserDefinedName, ' "'])
         self.wrensResetName = "CIU_RESET.dll"
+
+        self.update_wrens_paths()
+
+    def update_wrens_paths(self, verbose=False):
+        """Update WREnS paths"""
+
+        self.wrensLinearPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensLinearName, ' "'])
+        self.wrensExponentPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensExponentName, ' "'])
+        self.wrensBoltzmannPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensBoltzmannName, ' "'])
+        self.wrensUserDefinedPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensUserDefinedName, ' "'])
         self.wrensResetPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensResetName, ' "'])
 
-    def importConfig(self, fileName=None, e=None):
-        """
-        Imports config from a file
-        """
+        if verbose:
+            logger.info("".join(["WREnS runner path: ", self.wrensRunnerPath]))
+            logger.info("".join(["Linear path: ", self.wrensLinearPath]))
+            logger.info("".join(["Exponent path: ", self.wrensExponentPath]))
+            logger.info("".join(["Boltzmann path: ", self.wrensBoltzmannPath]))
+            logger.info("".join(["List path: ", self.wrensUserDefinedPath]))
+            logger.info("".join(["Reset path: ", self.wrensResetPath]))
+
+    def importConfig(self, fileName):
+        """Imports config from a file"""
         if not os.path.isfile(fileName):
-            print("not a path")
+            logger.error("not a path")
             return
+
         f = open(fileName, "r")
         for line in f:
             if len(line.split()) > 1:
@@ -109,18 +129,12 @@ class config:
                 if line.startswith("wrensResetName "):
                     self.wrensResetName = str(line.split()[1])
 
-        self.wrensLinearPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensLinearName, ' "'])
-        self.wrensExponentPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensExponentName, ' "'])
-        self.wrensBoltzmannPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensBoltzmannName, ' "'])
-        self.wrensUserDefinedPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensUserDefinedName, ' "'])
-        self.wrensResetPath = "".join(['"', self.wrensRunnerPath, '" ', self.wrensResetName, ' "'])
+        self.update_wrens_paths()
 
-    def exportConfig(self, fileName=None, e=None):
-        """
-        Exports config to a file
-        """
+    def exportConfig(self, fileName=None):
+        """Exports config to a file"""
 
-        print("".join(["Exporting configuration file ", fileName]))
+        logger.info("".join(["Exporting configuration file ", fileName]))
         f = open(fileName, "w+")
         f.write("General config scheme\n")
         f.write("Property<space>Value\n")
@@ -151,7 +165,7 @@ class config:
         Exports config to a file
         """
 
-        print("".join(["Exporting ORIGAMI configuration file ", fileName]))
+        logger.info("".join(["Exporting ORIGAMI configuration file ", fileName]))
 
         f = open(fileName, "w+")
         # Global setting

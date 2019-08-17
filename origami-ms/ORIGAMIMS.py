@@ -12,19 +12,20 @@ import logging
 import os
 import sys
 import webbrowser
-from subprocess import Popen
 from time import gmtime
 from time import strftime
 
 import config
-import dialogs
 import mainWindow
 import wx
 from data_handling import data_handling
 from IDs import ID_helpCite
+from IDs import ID_helpDocumentation
 from IDs import ID_helpGitHub
 from IDs import ID_helpHomepage
 from IDs import ID_helpNewVersion
+from utils.logging import set_logger
+from utils.logging import set_logger_level
 
 logger = logging.getLogger("origami")
 
@@ -64,38 +65,55 @@ class ORIGAMIMS(object):
         self.view = mainWindow.MyFrame(self, config=self.config, icons=self.icons, title="ORIGAMI-MS")
         self.view.Show()
 
-        self.wrensCMD = None
-        self.wrensRun = None
-        self.wrensReset = None
-        self.currentPath = ""
-        self.wrensInput = {"polarity": None, "activationZone": None, "method": None, "command": None}
         # Set current working directory
         self.config.cwd = os.getcwd()
-        self.logging = False
+        #         self.logging = False
 
         self.config.startTime = strftime("%H-%M-%S_%d-%m-%Y", gmtime())
         self.__wx_app.SetTopWindow(self.view)
         self.__wx_app.SetAppName("ORIGAMI-MS")
         self.__wx_app.SetVendorName("Lukasz G Migas, University of Manchester")
 
-        self.check_log_path()
-        # Log all events to
-        if self.logging:
-            sys.stdin = self.view.panelPlots.log
-            sys.stdout = self.view.panelPlots.log
-            sys.stderr = self.view.panelPlots.log
+        #         self.check_log_path()
+        self.on_start_logging()
+        #         # Log all events to
+        #         if self.logging:
+        #             sys.stdin = self.view.panelPlots.log
+        #             sys.stdout = self.view.panelPlots.log
+        #             sys.stderr = self.view.panelPlots.log
 
         self.on_import_config_on_start(evt=None)
         self.data_handling = data_handling(self, self.view, self.config)
 
         # setup after startup
         self.view.panelControls._setup_after_startup()
+        self.view._setup_after_startup()
+
+    def on_start_logging(self):
+        """Setup logger"""
+
+        log_directory = os.path.join(self.config.cwd, "logs")
+        if not os.path.exists(log_directory):
+            print("Directory logs did not exist - created a new one in {}".format(log_directory))
+            os.makedirs(log_directory)
+
+        # Generate filename
+        if self.config.loggingFile_path is None:
+
+            file_path = "origami_{}.log".format(self.config.startTime)
+            self.config.loggingFile_path = os.path.join(log_directory, file_path)
+
+        # setup logger
+        set_logger(file_path=self.config.loggingFile_path, debug_mode=True)
+        set_logger_level(verbose="DEBUG")
+
+        logger.info("Logs can be found in {}".format(self.config.loggingFile_path))
 
     def check_log_path(self):
         """Check log path exists"""
         log_directory = os.path.join(self.config.cwd, "logs")
         if not os.path.exists(log_directory):
-            print("Directory logs did not exist - created a new one in {}".format(log_directory))
+            logger.info("Directory logs did not exist - created a new one in {}".format(log_directory))
             os.makedirs(log_directory)
 
         # Generate filename
@@ -107,7 +125,13 @@ class ORIGAMIMS(object):
         """Open selected webpage."""
 
         # set link
-        links = {ID_helpHomepage: "home", ID_helpGitHub: "github", ID_helpCite: "cite", ID_helpNewVersion: "newVersion"}
+        links = {
+            ID_helpHomepage: "home",
+            ID_helpGitHub: "github",
+            ID_helpCite: "cite",
+            ID_helpNewVersion: "newVersion",
+            ID_helpDocumentation: "documentation",
+        }
 
         link = self.config.links[links[evt.GetId()]]
 
@@ -116,60 +140,6 @@ class ORIGAMIMS(object):
             webbrowser.open(link, autoraise=1)
         except Exception:
             logger.error("Failed to execute action")
-
-    def on_start_wrens_runner(self, evt):
-        """Start WREnS runner"""
-        if self.wrensCMD is None:
-            msg = "Are you sure you filled in correct details or pressed calculate?"
-            dialogs.dlgBox(
-                exceptionTitle="Please complete all necessary fields and press Calculate",
-                exceptionMsg=msg,
-                type="Error",
-            )
-            return
-
-        # A couple of checks to ensure the method in the settings is the one
-        # currently available in memory..
-        if self.wrensInput.get("polarity", None) != self.config.iPolarity:
-            msg = "The polarity of the current method and the one in the window do not agree. Consider re-calculating."
-            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-            return
-        if self.wrensInput.get("activationZone", None) != self.config.iActivationZone:
-            msg = (
-                "The activation zone of the current method and the one in the window do not agree."
-                + " Consider re-calculating."
-            )
-            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-            return
-        if self.wrensInput.get("method", None) != self.config.iActivationMode:
-            msg = (
-                "The acquisition mode of the current method and the one in the window do not agree."
-                + " Consider re-calculating."
-            )
-            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-            return
-        if self.wrensInput.get("command", None) != self.wrensCMD:
-            msg = (
-                "The command in the memory and the current method and the one in the window do not agree."
-                + " Consider re-calculating."
-            )
-            dialogs.dlgBox(exceptionTitle="Mistake in the input", exceptionMsg=msg, type="Error")
-            return
-
-        print("".join(["Your code: ", self.wrensCMD]))
-
-        self.wrensRun = Popen(self.wrensCMD)
-
-    def on_stop_wrens_runner(self, evt):
-        """Stop WREnS script"""
-
-        if self.wrensRun:
-            print("Stopped acquisition and reset the property banks")
-            self.wrensRun.kill()
-            self.wrensReset = Popen(self.config.wrensResetPath)
-            self.view.panelControls.goBtn.Enable()
-        else:
-            print("You have to start acquisition first!")
 
     def on_fill_in_default_values(self, evt=None):
         """Fill-in default values"""
@@ -180,9 +150,9 @@ class ORIGAMIMS(object):
 
         dlg = wx.DirDialog(self.view, "Select output directory...", style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
-            print("You chose %s" % dlg.GetPath())
+            logger.info("You chose %s" % dlg.GetPath())
             self.view.panelControls.path_value.SetValue(dlg.GetPath())
-            self.currentPath = dlg.GetPath()
+            self.config.currentPath = dlg.GetPath()
 
     def on_import_config(self, evt):
         """Imports configuration file"""
@@ -191,36 +161,34 @@ class ORIGAMIMS(object):
         )
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
-            self.config.importConfig(fileName=fileName, e=None)
-            print("".join(["WREnS runner path: ", self.config.wrensRunnerPath]))
-            print("".join(["Linear path: ", self.config.wrensLinearPath]))
-            print("".join(["Exponent path: ", self.config.wrensExponentPath]))
-            print("".join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
-            print("".join(["List path: ", self.config.wrensUserDefinedPath]))
-            print("".join(["Reset path: ", self.config.wrensResetPath]))
+            self.config.importConfig(fileName=fileName)
+            logger.info("".join(["WREnS runner path: ", self.config.wrensRunnerPath]))
+            logger.info("".join(["Linear path: ", self.config.wrensLinearPath]))
+            logger.info("".join(["Exponent path: ", self.config.wrensExponentPath]))
+            logger.info("".join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
+            logger.info("".join(["List path: ", self.config.wrensUserDefinedPath]))
+            logger.info("".join(["Reset path: ", self.config.wrensResetPath]))
 
     def on_import_config_on_start(self, evt):
         """Import configuration file on start-up of the application"""
-        print("Importing origamiConfig.ini")
-        self.config.importConfig(fileName="origamiConfig.ini", e=None)
+        logger.info("Importing origamiConfig.ini")
+        self.config.importConfig(fileName="origamiConfig.ini")
 
-        print("".join(["WREnS runner path: ", self.config.wrensRunnerPath]))
-        print("".join(["Linear path: ", self.config.wrensLinearPath]))
-        print("".join(["Exponent path: ", self.config.wrensExponentPath]))
-        print("".join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
-        print("".join(["List path: ", self.config.wrensUserDefinedPath]))
-        print("".join(["Reset path: ", self.config.wrensResetPath]))
+        logger.info("".join(["WREnS runner path: ", self.config.wrensRunnerPath]))
+        logger.info("".join(["Linear path: ", self.config.wrensLinearPath]))
+        logger.info("".join(["Exponent path: ", self.config.wrensExponentPath]))
+        logger.info("".join(["Boltzmann path: ", self.config.wrensBoltzmannPath]))
+        logger.info("".join(["List path: ", self.config.wrensUserDefinedPath]))
+        logger.info("".join(["Reset path: ", self.config.wrensResetPath]))
 
     def on_export_config(self, evt):
-        """
-        This function exports configuration file
-        """
+        """This function exports configuration file"""
         dlg = wx.FileDialog(
             self.view, "Save As Configuration File", wildcard="*.ini", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
         )
         if dlg.ShowModal() == wx.ID_OK:
             fileName = dlg.GetPath()
-            self.config.exportConfig(fileName=fileName, e=None)
+            self.config.exportConfig(fileName=fileName)
 
     def on_save_parameters(self, evt):
         dlg = wx.FileDialog(
@@ -242,7 +210,7 @@ class ORIGAMIMS(object):
             self.view, "Choose a file:", wildcard="*.txt; *.csv", style=wx.FD_DEFAULT_STYLE | wx.FD_CHANGE_DIR
         )
         if dlg.ShowModal() == wx.ID_OK:
-            print("You chose %s" % dlg.GetPath())
+            logger.info("You chose %s" % dlg.GetPath())
             self.config.CSVFilePath = dlg.GetPath()
 
 

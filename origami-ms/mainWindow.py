@@ -10,11 +10,14 @@
 # -------------------------------------------------------------------------
 # Load libraries
 import wx.aui
-from IDs import ID_exportConfigFile
 from IDs import ID_helpCite
+from IDs import ID_helpDocumentation
+from IDs import ID_helpGitHub
 from IDs import ID_helpNewVersion
+from IDs import ID_on_export_config
 from IDs import ID_on_import_config
-from IDs import ID_setMassLynxPath
+from IDs import ID_on_set_masslynx_path
+from IDs import ID_on_set_wrens_path
 from IDs import ID_SHOW_ABOUT
 from origamiStyles import makeMenuItem
 from panelAbout import panelAbout
@@ -23,7 +26,7 @@ from panelPlot import panelPlot
 
 
 class MyFrame(wx.Frame):
-    def __init__(self, parent, config, icons, id=-1, title="ORIGAMI-MS"):
+    def __init__(self, parent, config, icons, title="ORIGAMI-MS"):
         wx.Frame.__init__(self, None, title=title)
 
         self.SetSize(600, 700)
@@ -79,35 +82,45 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.presenter.quit)
 
+    def _setup_after_startup(self):
+        """Bind functions after intilization of `data_handling` module"""
+        self.Bind(wx.EVT_MENU, self.presenter.data_handling.on_update_wrens_path, id=ID_on_set_wrens_path)
+
     def make_menubar(self):
 
         # FILE MENU
         self.mainMenu = wx.MenuBar()
         menuFile = wx.Menu()
-        menuFile.Append(ID_setMassLynxPath, "Set MassLynx file path\tCtrl+O")
+        menuFile.Append(ID_on_set_masslynx_path, "Set MassLynx file path\tCtrl+O")
+        menuFile.AppendSeparator()
+        menuFile.Append(ID_on_set_wrens_path, "Set WREnS runner (ScriptRunnerLight.exe) path")
         menuFile.AppendSeparator()
         menuFile.Append(ID_on_import_config, "Import configuration file\tCtrl+C")
-        menuFile.Append(ID_exportConfigFile, "Export configuration file\tCtrl+Shift+C")
+        menuFile.Append(ID_on_export_config, "Export configuration file\tCtrl+Shift+C")
 
         self.mainMenu.Append(menuFile, "&File")
 
         # HELP MENU
         menuHelp = wx.Menu()
-        menuHelp.Append(ID_helpNewVersion, "Check for updates...")
-        menuHelp.Append(ID_helpCite, "Paper to cite...")
+        menuHelp.Append(ID_helpNewVersion, "Check for updates (online)")
+        menuHelp.Append(ID_helpDocumentation, "Open documentation site (online)")
+        menuHelp.Append(ID_helpGitHub, "Go to GitHub site (online)")
+        menuHelp.Append(ID_helpCite, "Go to ORIGAMI publication site (online)")
         menuHelp.AppendSeparator()
         menuHelp.Append(makeMenuItem(parent=menuHelp, id=ID_SHOW_ABOUT, text="About ORIGAMI\tCtrl+Shift+A"))
         self.mainMenu.Append(menuHelp, "&Help")
 
         self.SetMenuBar(self.mainMenu)
 
-        self.Bind(wx.EVT_MENU, self.presenter.on_get_masslynx_path, id=ID_setMassLynxPath)
+        self.Bind(wx.EVT_MENU, self.presenter.on_get_masslynx_path, id=ID_on_set_masslynx_path)
         self.Bind(wx.EVT_MENU, self.presenter.on_import_config, id=ID_on_import_config)
-        self.Bind(wx.EVT_MENU, self.presenter.on_export_config, id=ID_exportConfigFile)
+        self.Bind(wx.EVT_MENU, self.presenter.on_export_config, id=ID_on_export_config)
 
         self.Bind(wx.EVT_MENU, self.on_open_about, id=ID_SHOW_ABOUT)
         self.Bind(wx.EVT_MENU, self.presenter.on_open_link, id=ID_helpCite)
         self.Bind(wx.EVT_MENU, self.presenter.on_open_link, id=ID_helpNewVersion)
+        self.Bind(wx.EVT_MENU, self.presenter.on_open_link, id=ID_helpDocumentation)
+        self.Bind(wx.EVT_MENU, self.presenter.on_open_link, id=ID_helpGitHub)
 
     def on_open_about(self, evt):
         """Show About mMass panel."""

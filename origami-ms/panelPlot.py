@@ -8,13 +8,17 @@
 #    provided WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 # -------------------------------------------------------------------------
+import logging
 from time import gmtime
 from time import strftime
 
 import matplotlib
 import numpy as np
 import wx
+from origamiStyles import makeMenuItem
 from plottingWindow import plottingWindow
+
+logger = logging.getLogger("origami")
 
 
 class panelPlot(wx.Panel):
@@ -25,7 +29,7 @@ class panelPlot(wx.Panel):
 
         self.parent = parent
         self.config = config
-        self.currentPage = None
+        self.page_name = None
         self.startTime = strftime("%H-%M-%S_%d-%m-%Y", gmtime())
         self.config.startTime = self.startTime
 
@@ -61,22 +65,6 @@ class panelPlot(wx.Panel):
         box3.Add(self.plot3, 1, wx.EXPAND)
         self.panelCVs.SetSizer(box3)
 
-        # Setup LOG
-        self.panelLog = wx.Panel(self.plotNotebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-
-        self.plotNotebook.AddPage(self.panelLog, "ORIGAMI Log", False)
-
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_WORDWRAP
-        self.log = wx.TextCtrl(self.panelLog, wx.ID_ANY, size=(-1, -1), style=style)
-        self.log.SetBackgroundColour(wx.BLACK)
-        self.log.SetForegroundColour(wx.GREEN)
-
-        logSizer = wx.BoxSizer(wx.VERTICAL)
-        logSizer.Add(self.log, 1, wx.EXPAND)
-        self.panelLog.SetSizer(logSizer)
-
-        self.log.Bind(wx.EVT_TEXT, self.save_log_data)
-
         mainSizer.Add(self.plotNotebook, 1, wx.EXPAND | wx.ALL, 1)
 
         self.SetSize(0, 0, 420, 500)
@@ -84,11 +72,22 @@ class panelPlot(wx.Panel):
         self.Layout()
         self.Show(True)
 
-    def save_log_data(self, evt):
-        fileName = self.config.loggingFile_path
-        savefile = open(fileName, "w")
-        savefile.write(self.log.GetValue())
-        savefile.close()
+        self.Bind(wx.EVT_CONTEXT_MENU, self.on_right_click)
+
+    def on_right_click(self, evt):
+
+        menu = wx.Menu()
+        menu_action_copy_to_clipboard = makeMenuItem(parent=menu, id=wx.ID_ANY, text="Copy plot to clipboard")
+        menu.AppendItem(menu_action_copy_to_clipboard)
+
+        self.Bind(wx.EVT_MENU, self.on_copy_to_clipboard, menu_action_copy_to_clipboard)
+
+        self.PopupMenu(menu)
+        menu.Destroy()
+        self.SetFocus()
+
+    def on_get_current_page(self):
+        self.page_name = self.plotNotebook.GetPageText(self.plotNotebook.GetSelection())
 
     def on_plot_spv(self, xvals, yvals):
         self.plot1.clearPlot()
@@ -104,6 +103,20 @@ class panelPlot(wx.Panel):
         self.plot3.clearPlot()
         self.plot3.on_plot_1D(xvals, yvals, title="", xlabel="Scans", ylabel="Collision Voltage (V)")
         self.plot3.repaint()
+
+    def on_copy_to_clipboard(self, evt):
+        self.on_get_current_page()
+        plot_obj = self.get_plot_from_name(self.page_name)
+        plot_obj.copy_to_clipboard()
+
+    def get_plot_from_name(self, plot_name):
+        plot_dict = {
+            "Scans per Voltage": self.plot1,
+            "Acquisition time": self.plot2,
+            "Collision voltage steps": self.plot3,
+        }
+
+        return plot_dict.get(plot_name, None)
 
 
 class plot_1D(plottingWindow):
@@ -142,3 +155,7 @@ class plot_1D(plottingWindow):
         extent = [xlimits[0], ylimits[0], xlimits[1], ylimits[1]]
 
         self.setup_zoom([self.plotSPV], self.zoomtype, data_lims=extent)
+
+    def copy_to_clipboard(self):
+        self.canvas.Copy_to_Clipboard()
+        logger.info("Figure was copied to the clipboard")
