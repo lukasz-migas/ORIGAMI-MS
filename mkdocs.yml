@@ -9,7 +9,7 @@ site_url: https://origami-ms.lukasz-migas.com
 repo_url: https://github.com/lukasz-migas/ORIGAMI-MS
 edit_uri: https://github.com/lukasz-migas/ORIGAMI-MS/tree/master/site-source
 
-use_directory_urls: false
+use_directory_urls: true
 
 google_analytics: ["UA-130097236-2", "https://origami-ms.lukasz-migas.com"]
 docs_dir: "site-source"
@@ -30,18 +30,19 @@ extra_css:
 nav:
   - Home: index.md
   - Installation: main/installation.md
-  - User Guide:
-      - "How it works": user-guide/how-it-works.md
-      - "Available methods": user-guide/available-methods.md
-      - "Compiling WREnS scripts": user-guide/compilation.md
-      - "Usage": user-guide/usage.md
-      - "Troubleshooting": user-guide/troubleshooting.md
   - Request New Features: main/request.md
   - Report Bugs: main/bugs.md
   - Newsletter: main/subscribe.md
   - Cite: main/cite.md
   - About: main/about.md
-
+  - User Guide:
+      - "How it works": user-guide/how-it-works.md
+      - "Available methods": user-guide/available-methods.md
+      - "Compiling WREnS scripts": user-guide/compilation.md
+      - "Usage": user-guide/usage.md
+  - Troubleshooting:
+      - "FAQ": troubleshooting/faq.md
+      - "Troubleshooting": troubleshooting/troubleshooting.md
 theme:
   name: material
   language: "en"
