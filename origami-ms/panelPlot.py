@@ -78,7 +78,7 @@ class panelPlot(wx.Panel):
 
         menu = wx.Menu()
         menu_action_copy_to_clipboard = makeMenuItem(parent=menu, id=wx.ID_ANY, text="Copy plot to clipboard")
-        menu.AppendItem(menu_action_copy_to_clipboard)
+        menu.Append(menu_action_copy_to_clipboard)
 
         self.Bind(wx.EVT_MENU, self.on_copy_to_clipboard, menu_action_copy_to_clipboard)
 

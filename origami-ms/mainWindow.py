@@ -27,7 +27,7 @@ from panelPlot import panelPlot
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, config, icons, title="ORIGAMI-MS"):
-        wx.Frame.__init__(self, None, title=title)
+        wx.Frame.__init__(self, None, title=title, style=wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
 
         self.SetSize(600, 700)
         self.Centre()
