@@ -7,7 +7,6 @@ from utils.converters import str2num
 
 
 class TestConverters(object):
-
     @staticmethod
     def test_str2num():
         expected_value = 42.0

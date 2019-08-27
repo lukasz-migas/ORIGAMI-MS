@@ -300,17 +300,8 @@ class panelControls(wx.Panel):
 
     def on_apply(self, evt):
 
-        polarityID = self.polarityBox.GetStringSelection()
-        if polarityID == "Positive":
-            self.config.iPolarity = "POSITIVE"
-        else:
-            self.config.iPolarity = "NEGATIVE"
-
-        activationID = self.activationZone.GetStringSelection()
-        if activationID == "Cone":
-            self.config.iActivationZone = "CONE"
-        else:
-            self.config.iActivationZone = "TRAP"
+        self.config.iPolarity = self.polarityBox.GetStringSelection().upper().replace(" ", "")
+        self.config.iActivationZone = self.activationZone.GetStringSelection().upper().replace(" ", "")
 
         self.config.iActivationMode = self.activationType.GetStringSelection()
 

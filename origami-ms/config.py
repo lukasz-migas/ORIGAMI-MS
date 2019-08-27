@@ -26,7 +26,7 @@ class config:
     def __init__(self):
         self.cwd = None
         self.loggingFile_path = None
-        self.version = "1.1.0"
+        self.version = "1.1.1"
         self.testing = False
 
         self.links = {
