@@ -282,12 +282,12 @@ class panelControls(wx.Panel):
         grid.Add(self.goBtn, (0, 4), flag=wx.ALIGN_CENTER | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND)
         grid.Add(self.stopBtn, (0, 5), flag=wx.ALIGN_CENTER | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND)
 
-        grid.Add(path_label, (1, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL)
+        grid.Add(path_label, (1, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         grid.Add(
             self.path_value,
             (1, 1),
             (1, 5),
-            flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.EXPAND,
+            flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.EXPAND,
         )
 
         # make bindings

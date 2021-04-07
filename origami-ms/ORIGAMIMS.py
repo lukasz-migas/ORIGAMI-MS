@@ -31,11 +31,18 @@ logger = logging.getLogger("origami")
 # disable MPL logger
 logging.getLogger("matplotlib").setLevel(logging.ERROR)
 
+class App(wx.App):
+    """Slightly modified wxApp"""
+
+    def InitLocale(self):
+        """Initialize locale"""
+        self.ResetLocale()
+
 
 class ORIGAMIMS(object):
     def __init__(self, *args, **kwargs):
 
-        self.__wx_app = wx.App(*args, **kwargs)
+        self.__wx_app = App(*args, **kwargs)
         self.run = None
         self.view = None
         self.initilize(*args, **kwargs)
